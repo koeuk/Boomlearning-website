@@ -100,20 +100,39 @@ onUnmounted(() => {
   <div>
     <!-- Authenticated Dashboard Section -->
     <template v-if="auth.isAuthenticated">
-      <section class="bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 class="text-2xl md:text-3xl font-bold mb-1">Welcome back, {{ auth.user?.full_name?.split(' ')[0] }}!</h1>
-          <p class="text-primary-100">Here's your learning progress</p>
+      <section class="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white">
+        <div class="absolute inset-0">
+          <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-white/5" />
+          <div class="absolute -left-10 -bottom-10 w-60 h-60 rounded-full bg-white/5" />
+          <div class="absolute right-1/3 top-1/4 w-40 h-40 rounded-full bg-accent-500/10" />
+        </div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/10">
+              <span class="text-2xl font-bold">{{ auth.user?.full_name?.[0]?.toUpperCase() }}</span>
+            </div>
+            <div>
+              <h1 class="text-2xl md:text-3xl font-bold">Welcome back, {{ auth.user?.full_name?.split(' ')[0] }}!</h1>
+              <p class="text-primary-200 mt-0.5">Here's your learning progress</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      <section class="bg-gray-50">
+      <section class="bg-gray-50/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-          <DashboardStatsCards :stats="dashStats" :loading="dashLoading" />
+          <!-- Stats pulled up to overlap hero -->
+          <div class="-mt-14 relative z-10">
+            <DashboardStatsCards :stats="dashStats" :loading="dashLoading" />
+          </div>
 
-          <div class="grid lg:grid-cols-2 gap-8">
-            <DashboardContinueLearning :enrollments="dashEnrollments" :loading="dashLoading" />
-            <DashboardRecentActivity :activities="dashActivities" :loading="dashLoading" />
+          <div class="grid lg:grid-cols-5 gap-8">
+            <div class="lg:col-span-3">
+              <DashboardContinueLearning :enrollments="dashEnrollments" :loading="dashLoading" />
+            </div>
+            <div class="lg:col-span-2">
+              <DashboardRecentActivity :activities="dashActivities" :loading="dashLoading" />
+            </div>
           </div>
         </div>
       </section>
@@ -214,28 +233,36 @@ onUnmounted(() => {
       </section>
 
       <!-- Stats -->
-      <section class="bg-white border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div class="text-center">
-              <BookOpen class="w-8 h-8 text-primary-500 mx-auto mb-2" />
-              <div class="text-2xl font-bold text-gray-900">50+</div>
-              <div class="text-sm text-gray-500">Courses</div>
+      <section class="bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-100">
+              <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mx-auto mb-3">
+                <BookOpen class="w-6 h-6 text-blue-600" />
+              </div>
+              <div class="text-3xl font-extrabold text-gray-900">50+</div>
+              <div class="text-sm text-gray-500 mt-1">Courses</div>
             </div>
-            <div class="text-center">
-              <Users class="w-8 h-8 text-primary-500 mx-auto mb-2" />
-              <div class="text-2xl font-bold text-gray-900">500+</div>
-              <div class="text-sm text-gray-500">Students</div>
+            <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-100">
+              <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-3">
+                <Users class="w-6 h-6 text-emerald-600" />
+              </div>
+              <div class="text-3xl font-extrabold text-gray-900">500+</div>
+              <div class="text-sm text-gray-500 mt-1">Students</div>
             </div>
-            <div class="text-center">
-              <GraduationCap class="w-8 h-8 text-primary-500 mx-auto mb-2" />
-              <div class="text-2xl font-bold text-gray-900">200+</div>
-              <div class="text-sm text-gray-500">Graduates</div>
+            <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 border border-violet-100">
+              <div class="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mx-auto mb-3">
+                <GraduationCap class="w-6 h-6 text-violet-600" />
+              </div>
+              <div class="text-3xl font-extrabold text-gray-900">200+</div>
+              <div class="text-sm text-gray-500 mt-1">Graduates</div>
             </div>
-            <div class="text-center">
-              <Award class="w-8 h-8 text-primary-500 mx-auto mb-2" />
-              <div class="text-2xl font-bold text-gray-900">100+</div>
-              <div class="text-sm text-gray-500">Certificates</div>
+            <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-100">
+              <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mx-auto mb-3">
+                <Award class="w-6 h-6 text-amber-600" />
+              </div>
+              <div class="text-3xl font-extrabold text-gray-900">100+</div>
+              <div class="text-sm text-gray-500 mt-1">Certificates</div>
             </div>
           </div>
         </div>
@@ -243,12 +270,12 @@ onUnmounted(() => {
     </template>
 
     <!-- Categories (both modes) -->
-    <section v-if="categories.length > 0" class="bg-gray-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="flex items-center justify-between mb-8">
+    <section v-if="categories.length > 0" class="bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
+        <div class="flex items-center justify-between mb-10">
           <div>
-            <h2 class="text-2xl font-bold text-gray-900">Browse Categories</h2>
-            <p class="text-gray-500 mt-1">Find courses in your area of interest</p>
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Browse Categories</h2>
+            <p class="text-gray-400 mt-2">Find courses in your area of interest</p>
           </div>
           <NuxtLink
             to="/categories"
@@ -274,12 +301,12 @@ onUnmounted(() => {
     </section>
 
     <!-- Featured Courses (both modes) -->
-    <section class="bg-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="flex items-center justify-between mb-8">
+    <section class="bg-gray-50/80">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
+        <div class="flex items-center justify-between mb-10">
           <div>
-            <h2 class="text-2xl font-bold text-gray-900">Featured Courses</h2>
-            <p class="text-gray-500 mt-1">Handpicked courses to help you get started</p>
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Featured Courses</h2>
+            <p class="text-gray-400 mt-2">Handpicked courses to help you get started</p>
           </div>
           <NuxtLink
             to="/courses"
@@ -307,18 +334,30 @@ onUnmounted(() => {
     </section>
 
     <!-- CTA (guest only) -->
-    <section v-if="!auth.isAuthenticated" class="bg-gray-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-        <h2 class="text-3xl font-bold text-gray-900 mb-4">Ready to Start Learning?</h2>
-        <p class="text-gray-500 mb-8 max-w-lg mx-auto">
+    <section v-if="!auth.isAuthenticated" class="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800">
+      <div class="absolute inset-0">
+        <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-white/5" />
+        <div class="absolute -left-10 -bottom-10 w-60 h-60 rounded-full bg-white/5" />
+      </div>
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Start Learning?</h2>
+        <p class="text-primary-200 mb-8 max-w-lg mx-auto">
           Join thousands of students who are already learning and growing with BoomLearning.
         </p>
-        <NuxtLink
-          to="/courses"
-          class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-medium px-8 py-3 rounded-lg transition-colors"
-        >
-          Explore Courses
-        </NuxtLink>
+        <div class="flex flex-wrap justify-center gap-4">
+          <NuxtLink
+            to="/courses"
+            class="inline-flex items-center gap-2 bg-white text-primary-700 font-semibold px-8 py-3.5 rounded-xl hover:bg-gray-50 transition-colors shadow-lg shadow-primary-900/20"
+          >
+            Explore Courses
+          </NuxtLink>
+          <NuxtLink
+            to="/register"
+            class="inline-flex items-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors shadow-lg shadow-primary-900/20"
+          >
+            Get Started Free
+          </NuxtLink>
+        </div>
       </div>
     </section>
   </div>

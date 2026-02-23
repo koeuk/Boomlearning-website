@@ -1,6 +1,6 @@
 # BoomLearning-Website Implementation Guide
 
-> Implementation guide for building the Boom Learning public-facing website using **Nuxt.js 3**, **TypeScript**, and **shadcn-vue**.
+> Implementation guide for the Boom Learning public-facing website using **Nuxt.js 3**, **TypeScript**, and **shadcn-vue**.
 
 ---
 
@@ -12,14 +12,14 @@ The BoomLearning-Website is a separate frontend project that consumes the Boomle
 
 ```
 ┌─────────────────────┐     ┌──────────────────────────┐
-│  BoomlearningSystem      │     │  BoomLearning-Website         │
-│  (Laravel Backend)  │◄────│  (Nuxt 3 + TypeScript)   │
-│                     │     │                          │
-│  • REST API /api    │     │  • SSR/SSG pages         │
-│  • Sanctum Auth     │     │  • shadcn-vue UI         │
-│  • Media Storage    │     │  • Pinia state           │
-│  • Admin Dashboard  │     │  • Student-facing        │
-└─────────────────────┘     └──────────────────────────┘
+│  BoomlearningSystem  │     │  BoomLearning-Website    │
+│  (Laravel Backend)   │◄────│  (Nuxt 3 + TypeScript)   │
+│                      │     │                          │
+│  • REST API /api     │     │  • SSR/ISR/CSR pages     │
+│  • Sanctum Auth      │     │  • shadcn-vue UI         │
+│  • Media Storage     │     │  • Pinia state           │
+│  • Admin Dashboard   │     │  • Student-facing        │
+└──────────────────────┘     └──────────────────────────┘
 ```
 
 ---
@@ -30,12 +30,12 @@ The BoomLearning-Website is a separate frontend project that consumes the Boomle
 |------------------|-------------------------------|
 | Framework        | Nuxt.js 3                     |
 | Language         | TypeScript                    |
-| UI Components    | shadcn-vue                    |
+| UI Components    | shadcn-vue (reka-ui based)    |
 | Styling          | Tailwind CSS 4                |
 | Icons            | Lucide Vue Next               |
 | State Management | Pinia                         |
-| HTTP Client      | `$fetch` / `useFetch` (Nuxt)  |
-| Auth             | Sanctum token (Bearer)        |
+| HTTP Client      | `$fetch` via `useApi` composable |
+| Auth             | Sanctum token (Bearer) with manual localStorage persistence |
 | Charts           | Chart.js + vue-chartjs        |
 
 ---
@@ -56,6 +56,7 @@ cd BoomLearning-Website
 npm install pinia @pinia/nuxt
 npm install lucide-vue-next
 npm install chart.js vue-chartjs
+npm install @vueuse/core
 
 # shadcn-vue (follow Nuxt setup)
 npx shadcn-vue@latest init
@@ -67,9 +68,18 @@ npm install tailwindcss @tailwindcss/vite
 ### 3. Configure `nuxt.config.ts`
 
 ```typescript
+import tailwindcss from '@tailwindcss/vite'
+
 export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@pinia/nuxt'],
+
+  components: [
+    {
+      path: '~/components',
+      extensions: ['.vue'],
+    },
+  ],
 
   runtimeConfig: {
     public: {
@@ -85,7 +95,7 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    // Public pages — SSG or ISR
+    // Public pages — prerender or ISR
     '/': { prerender: true },
     '/courses': { isr: 60 },
     '/courses/**': { isr: 60 },
@@ -93,13 +103,17 @@ export default defineNuxtConfig({
     '/categories/**': { isr: 60 },
     '/certificates/verify/**': { ssr: true },
 
-    // Auth-required pages — CSR only
+    // Auth-required pages — CSR only (no SSR)
     '/dashboard/**': { ssr: false },
     '/profile/**': { ssr: false },
     '/enrollments/**': { ssr: false },
+    '/lessons/**': { ssr: false },
+    '/quizzes/**': { ssr: false },
     '/payments/**': { ssr: false },
     '/certificates': { ssr: false },
-  }
+  },
+
+  compatibilityDate: '2025-01-01',
 })
 ```
 
@@ -107,15 +121,13 @@ export default defineNuxtConfig({
 
 ```env
 # .env
-NUXT_PUBLIC_API_BASE=http://localhost:8000/api
-NUXT_PUBLIC_STORAGE_BASE=http://localhost:8000/storage
+NUXT_PUBLIC_API_BASE=http://eduplex.test:8001/api
+NUXT_PUBLIC_STORAGE_BASE=http://eduplex.test:8001/storage
 ```
 
 ---
 
 ## Brand Colors
-
-Apply the same brand colors from the BoomlearningSystem dashboard.
 
 ```css
 /* assets/css/main.css */
@@ -156,122 +168,129 @@ Apply the same brand colors from the BoomlearningSystem dashboard.
 BoomLearning-Website/
 ├── assets/
 │   └── css/
-│       └── main.css
+│       └── main.css              # Tailwind v4 + brand colors
 ├── components/
-│   ├── ui/                     # shadcn-vue components
+│   ├── ui/                       # shadcn-vue components
+│   │   ├── alert/
+│   │   ├── avatar/
+│   │   ├── badge/
 │   │   ├── button/
 │   │   ├── card/
-│   │   ├── badge/
-│   │   ├── input/
 │   │   ├── dialog/
+│   │   ├── dropdown-menu/
+│   │   ├── input/
+│   │   ├── label/
+│   │   ├── select/
+│   │   ├── separator/
+│   │   ├── sheet/
 │   │   ├── skeleton/
-│   │   ├── toast/
-│   │   └── ...
+│   │   ├── tabs/
+│   │   └── textarea/
 │   ├── layout/
-│   │   ├── Navbar.vue
-│   │   ├── Footer.vue
-│   │   ├── BottomNav.vue       # Mobile bottom navigation
-│   │   └── SearchBar.vue
+│   │   ├── Navbar.vue            # Sticky nav with search, auth, mobile menu
+│   │   ├── Footer.vue            # Site footer with links
+│   │   └── BottomNav.vue         # Mobile bottom navigation
 │   ├── course/
-│   │   ├── CourseCard.vue
-│   │   ├── CourseGrid.vue
-│   │   ├── CourseFilters.vue
-│   │   ├── CourseModules.vue
-│   │   └── CourseReviews.vue
+│   │   ├── CourseCard.vue        # Course card with thumbnail, level, rating, price
+│   │   ├── CourseGrid.vue        # Grid of CourseCards with skeleton & empty state
+│   │   ├── CourseFilters.vue     # Search + level/category/sort filters, mobile Sheet
+│   │   ├── CourseModules.vue     # Collapsible accordion of modules & lessons
+│   │   └── CourseReviews.vue     # Paginated reviews list with rating summary
 │   ├── category/
-│   │   ├── CategoryCard.vue
-│   │   └── CategoryChips.vue
+│   │   ├── CategoryCard.vue      # Category card with image/icon, name, count
+│   │   └── CategoryChips.vue     # Horizontal scrollable filter chips
 │   ├── learning/
-│   │   ├── LessonViewer.vue
-│   │   ├── VideoPlayer.vue
-│   │   ├── TextContent.vue
-│   │   ├── QuizPlayer.vue
-│   │   └── ProgressBar.vue
+│   │   ├── LessonViewer.vue      # Lesson container (video + text + documents)
+│   │   ├── VideoPlayer.vue       # Video player with poster support
+│   │   ├── TextContent.vue       # HTML content renderer with prose styling
+│   │   ├── QuizPlayer.vue        # Full quiz UI with timer, navigation, submit
+│   │   └── ProgressBar.vue       # Reusable progress bar (sm/md/lg)
 │   ├── dashboard/
-│   │   ├── StatsCards.vue
-│   │   ├── ContinueLearning.vue
-│   │   └── RecentActivity.vue
+│   │   ├── StatsCards.vue        # Dashboard stat cards with skeleton loading
+│   │   ├── ContinueLearning.vue  # In-progress enrollments with progress bars
+│   │   └── RecentActivity.vue    # Activity feed with type-based icons
 │   ├── certificate/
-│   │   ├── CertificateCard.vue
-│   │   └── CertificateViewer.vue
+│   │   └── CertificateViewer.vue # Decorative certificate display card
 │   └── review/
-│       ├── ReviewCard.vue
-│       ├── ReviewForm.vue
-│       └── RatingSummary.vue
+│       ├── StarRating.vue        # Star rating display (sm/md/lg, optional value)
+│       ├── ReviewCard.vue        # Review with avatar, stars, recommend badge
+│       └── RatingSummary.vue     # Average rating + star breakdown bars
 ├── composables/
-│   ├── useApi.ts               # API wrapper around $fetch
-│   ├── useAuth.ts              # Auth state & guards
-│   └── useTheme.ts             # Dark mode toggle
+│   └── useApi.ts                 # API wrapper using $fetch.create with Bearer token
 ├── layouts/
-│   ├── default.vue             # Navbar + Footer + BottomNav
-│   ├── auth.vue                # Minimal layout for login/register
-│   └── learning.vue            # Immersive layout (no nav) for lessons/quizzes
+│   ├── default.vue               # Navbar + Footer + BottomNav
+│   ├── auth.vue                  # Centered card layout for login/register
+│   └── learning.vue              # Minimal white layout for lessons/quizzes
 ├── middleware/
-│   ├── auth.ts                 # Redirect to /login if not authenticated
-│   └── guest.ts                # Redirect to / if already authenticated
+│   ├── auth.ts                   # Redirect to /login if not authenticated
+│   └── guest.ts                  # Redirect to / if already authenticated
 ├── pages/
-│   ├── index.vue               # Home / Dashboard (guest + auth modes)
-│   ├── login.vue               # Login page
-│   ├── register.vue            # Registration page
-│   ├── forgot-password.vue     # Forgot password
-│   ├── reset-password.vue      # Reset password
+│   ├── index.vue                 # Home (guest: slides/hero + auth: dashboard)
+│   ├── login.vue                 # Login page
+│   ├── register.vue              # Registration page
+│   ├── forgot-password.vue       # Forgot password
+│   ├── reset-password.vue        # Reset password
+│   ├── search.vue                # Global search with filters
 │   ├── courses/
-│   │   ├── index.vue           # Course catalog (public)
-│   │   └── [id].vue            # Course detail (public)
+│   │   ├── index.vue             # Course catalog with filters & pagination
+│   │   └── [id].vue              # Course detail with modules, reviews, enrollment
 │   ├── categories/
-│   │   ├── index.vue           # All categories (public)
-│   │   └── [id].vue            # Category courses (public)
+│   │   ├── index.vue             # All categories grid
+│   │   └── [id].vue              # Category hero + paginated courses
 │   ├── enrollments/
-│   │   ├── index.vue           # My Learning (auth)
-│   │   └── [id].vue            # Enrollment detail (auth)
+│   │   ├── index.vue             # My Learning list (auth)
+│   │   └── [id].vue              # Enrollment detail with module progress (auth)
 │   ├── lessons/
-│   │   └── [id].vue            # Lesson viewer (auth)
+│   │   └── [id].vue              # Lesson viewer with mark-complete (auth)
 │   ├── quizzes/
-│   │   ├── [id].vue            # Quiz info / start (auth)
+│   │   ├── [id].vue              # Quiz info / start page (auth)
 │   │   └── [id]/
-│   │       ├── take.vue        # Active quiz taking (auth)
+│   │       ├── take.vue          # Active quiz taking (auth)
 │   │       └── results/
 │   │           └── [attemptId].vue  # Quiz results (auth)
 │   ├── certificates/
-│   │   ├── index.vue           # My certificates (auth)
-│   │   ├── [id].vue            # Certificate detail (auth)
+│   │   ├── index.vue             # My certificates (auth)
+│   │   ├── [id].vue              # Certificate detail (auth)
 │   │   └── verify/
-│   │       └── [code].vue      # Public verification (public)
+│   │       └── [code].vue        # Public certificate verification
 │   ├── payments/
-│   │   ├── index.vue           # Payment history (auth)
-│   │   ├── [id].vue            # Payment detail (auth)
-│   │   └── checkout.vue        # Payment checkout (auth)
+│   │   ├── index.vue             # Payment history (auth)
+│   │   ├── [id].vue              # Payment detail (auth)
+│   │   └── checkout.vue          # Payment checkout (auth)
 │   ├── reviews/
-│   │   └── index.vue           # My reviews (auth)
+│   │   └── index.vue             # My reviews (auth)
 │   ├── notifications/
-│   │   └── index.vue           # Notifications (auth)
+│   │   └── index.vue             # Notifications (auth)
 │   ├── profile/
-│   │   ├── index.vue           # Profile view (auth)
-│   │   ├── edit.vue            # Edit profile (auth)
-│   │   └── change-password.vue # Change password (auth)
-│   ├── activity/
-│   │   └── index.vue           # Activity log (auth)
-│   └── search.vue              # Global search (public)
+│   │   ├── index.vue             # Profile view (auth)
+│   │   ├── edit.vue              # Edit profile (auth)
+│   │   └── change-password.vue   # Change password (auth)
+│   └── activity/
+│       └── index.vue             # Activity log (auth)
 ├── plugins/
-│   └── api.ts                  # Global API plugin
+│   └── auth.client.ts            # Initialize auth store from localStorage on mount
 ├── stores/
-│   ├── auth.ts                 # Auth store (user, token, login/logout)
-│   ├── cart.ts                 # Enrollment/payment cart
-│   └── notifications.ts       # Notification store
+│   ├── auth.ts                   # Auth store (manual localStorage persistence)
+│   └── notifications.ts          # Notification store
 ├── types/
-│   ├── api.ts                  # API response types
-│   ├── course.ts               # Course, Module, Lesson types
-│   ├── user.ts                 # User, Student types
-│   ├── enrollment.ts           # Enrollment types
-│   ├── quiz.ts                 # Quiz, Question, Attempt types
-│   ├── payment.ts              # Payment types
-│   ├── certificate.ts          # Certificate types
-│   ├── notification.ts         # Notification types
-│   └── review.ts               # Review types
+│   ├── api.ts                    # ApiResponse, PaginatedResponse, ApiError
+│   ├── course.ts                 # Course, Module, Lesson, LessonProgress, Document
+│   ├── category.ts               # Category
+│   ├── user.ts                   # User, LoginRequest, RegisterRequest, AuthResponse
+│   ├── enrollment.ts             # Enrollment
+│   ├── quiz.ts                   # Quiz, Question, QuizOption, QuizAttempt
+│   ├── payment.ts                # Payment
+│   ├── certificate.ts            # Certificate
+│   ├── notification.ts           # Notification
+│   ├── review.ts                 # Review
+│   └── slide.ts                  # Slide
 ├── utils/
-│   ├── formatters.ts           # Date, currency, duration formatters
-│   └── validators.ts           # Form validation helpers
+│   ├── formatters.ts             # resolveImageUrl, formatCurrency, formatDate, etc.
+│   └── validators.ts             # Validation helpers + parseApiErrors
+├── lib/
+│   └── utils.ts                  # cn() classname merger for Tailwind
 ├── nuxt.config.ts
+├── components.json               # shadcn-vue configuration
 ├── package.json
 └── tsconfig.json
 ```
@@ -284,19 +303,24 @@ BoomLearning-Website/
 
 ```typescript
 // composables/useApi.ts
+import type { ApiResponse, PaginatedResponse } from '~/types/api'
+
 export const useApi = () => {
   const config = useRuntimeConfig()
-  const auth = useAuthStore()
+  const authStore = useAuthStore()
 
   const apiFetch = $fetch.create({
-    baseURL: config.public.apiBase,
-    headers: computed(() => ({
-      'Accept': 'application/json',
-      ...(auth.token ? { 'Authorization': `Bearer ${auth.token}` } : {}),
-    })),
+    baseURL: config.public.apiBase as string,
+    onRequest({ options }) {
+      const headers = options.headers = new Headers(options.headers)
+      headers.set('Accept', 'application/json')
+      if (authStore.token) {
+        headers.set('Authorization', `Bearer ${authStore.token}`)
+      }
+    },
     onResponseError({ response }) {
       if (response.status === 401) {
-        auth.logout()
+        authStore.clearAuth()
         navigateTo('/login')
       }
     }
@@ -331,6 +355,36 @@ export interface PaginatedResponse<T> {
     prev: string | null
     next: string | null
   }
+}
+
+export interface ApiError {
+  success: false
+  message: string
+  errors?: Record<string, string | string[]>
+}
+```
+
+### Error Parsing
+
+`$fetch` errors store response data at `error.response._data`, not `error.data`:
+
+```typescript
+// utils/validators.ts
+export function parseApiErrors(error: any): Record<string, string> {
+  const errors: Record<string, string> = {}
+  const data = error?.response?._data ?? error?.data
+
+  if (data?.errors) {
+    for (const [key, value] of Object.entries(data.errors)) {
+      errors[key] = Array.isArray(value) ? value[0] : (value as string)
+    }
+  } else if (data?.message) {
+    errors.general = data.message
+  } else {
+    errors.general = 'An unexpected error occurred. Please try again.'
+  }
+
+  return errors
 }
 ```
 
@@ -426,10 +480,13 @@ All endpoints consumed by the website. Base URL: `/api`
 
 ### Auth Store
 
+Uses manual localStorage persistence (no plugin required):
+
 ```typescript
 // stores/auth.ts
 import { defineStore } from 'pinia'
-import type { User } from '~/types/user'
+import type { User, LoginRequest, AuthResponse } from '~/types/user'
+import type { ApiResponse } from '~/types/api'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -439,45 +496,68 @@ export const useAuthStore = defineStore('auth', {
 
   getters: {
     isAuthenticated: (state) => !!state.token,
+    fullName: (state) => state.user?.full_name ?? '',
+    avatarUrl: (state) => state.user?.image_url ?? null,
   },
 
   actions: {
-    async login(email: string, password: string) {
+    init() {
+      if (import.meta.client) {
+        const saved = localStorage.getItem('auth')
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved)
+            this.token = parsed.token ?? null
+            this.user = parsed.user ?? null
+          } catch {
+            localStorage.removeItem('auth')
+          }
+        }
+      }
+    },
+
+    save() {
+      if (import.meta.client) {
+        localStorage.setItem('auth', JSON.stringify({
+          token: this.token,
+          user: this.user,
+        }))
+      }
+    },
+
+    async login(credentials: LoginRequest) {
       const { apiFetch } = useApi()
-      const res = await apiFetch('/auth/login', {
+      const res = await apiFetch<ApiResponse<AuthResponse>>('/auth/login', {
         method: 'POST',
-        body: { email, password },
+        body: credentials,
       })
       this.token = res.data.token
       this.user = res.data.user
+      this.save()
     },
 
-    async register(formData: FormData) {
-      const { apiFetch } = useApi()
-      const res = await apiFetch('/auth/register', {
-        method: 'POST',
-        body: formData,
-      })
-      this.token = res.data.token
-      this.user = res.data.user
-    },
+    async register(formData: FormData) { /* POST /auth/register */ },
+    async fetchProfile() { /* GET /auth/profile */ },
+    async logout() { /* POST /auth/logout, clearAuth, navigateTo('/') */ },
 
-    async fetchProfile() {
-      const { apiFetch } = useApi()
-      const res = await apiFetch('/auth/profile')
-      this.user = res.data
-    },
-
-    async logout() {
-      const { apiFetch } = useApi()
-      try { await apiFetch('/auth/logout', { method: 'POST' }) } catch {}
+    clearAuth() {
       this.token = null
       this.user = null
-      navigateTo('/')
+      if (import.meta.client) {
+        localStorage.removeItem('auth')
+      }
     },
   },
+})
+```
 
-  persist: true, // requires @pinia-plugin-persistedstate/nuxt
+### Auth Initialization Plugin
+
+```typescript
+// plugins/auth.client.ts
+export default defineNuxtPlugin(() => {
+  const auth = useAuthStore()
+  auth.init()
 })
 ```
 
@@ -487,7 +567,6 @@ export const useAuthStore = defineStore('auth', {
 // middleware/auth.ts
 export default defineNuxtRouteMiddleware((to) => {
   const auth = useAuthStore()
-
   if (!auth.isAuthenticated) {
     return navigateTo(`/login?redirect=${encodeURIComponent(to.fullPath)}`)
   }
@@ -499,10 +578,10 @@ export default defineNuxtRouteMiddleware((to) => {
 ```typescript
 // pages/login.vue
 const route = useRoute()
-const redirect = route.query.redirect as string | undefined
 
 async function handleLogin() {
-  await auth.login(form.email, form.password)
+  await auth.login({ login: form.login, password: form.password })
+  const redirect = route.query.redirect as string | undefined
   navigateTo(redirect || '/')
 }
 ```
@@ -512,6 +591,45 @@ async function handleLogin() {
 ## TypeScript Types
 
 ```typescript
+// types/user.ts
+export interface User {
+  id: number
+  username: string
+  email: string
+  full_name: string
+  phone: string | null
+  date_of_birth: string | null
+  gender: string | null
+  address: string | null
+  image_url: string | null
+  user_type: string
+  status: string
+  created_at: string
+  updated_at?: string
+}
+
+export interface LoginRequest {
+  login: string
+  password: string
+}
+
+export interface RegisterRequest {
+  username: string
+  email: string
+  password: string
+  password_confirmation: string
+  full_name: string
+  phone?: string
+  date_of_birth?: string
+  gender?: string
+  profile_picture?: File
+}
+
+export interface AuthResponse {
+  user: User
+  token: string
+}
+
 // types/course.ts
 export interface Course {
   id: number
@@ -562,26 +680,29 @@ export interface Lesson {
   progress: LessonProgress | null
 }
 
-// types/user.ts
-export interface User {
+export interface LessonProgress {
   id: number
-  username: string
-  email: string
-  full_name: string
-  phone: string | null
-  date_of_birth: string | null
-  gender: string | null
-  address: string | null
-  profile_picture: string | null
-  student: Student | null
-  created_at: string
+  status: string
+  time_spent_minutes: number
+  completed_at: string | null
 }
 
-export interface Student {
+export interface Document {
   id: number
-  student_id_number: string
-  enrollment_date: string
-  student_status: string
+  name: string
+  url: string
+  mime_type: string
+  size: number
+}
+
+// types/category.ts
+export interface Category {
+  id: number
+  category_name: string
+  description: string | null
+  icon: string | null
+  image: string | null
+  courses_count: number
 }
 
 // types/enrollment.ts
@@ -622,6 +743,17 @@ export interface Question {
 export interface QuizOption {
   id: number
   option_text: string
+}
+
+export interface QuizAttempt {
+  id: number
+  score: number
+  total_points: number
+  percentage: number
+  passed: boolean
+  started_at: string
+  completed_at: string | null
+  time_spent_minutes: number
 }
 
 // types/certificate.ts
@@ -666,7 +798,19 @@ export interface Review {
   review_text: string | null
   would_recommend: boolean
   student: { full_name: string; profile_picture: string | null }
+  course?: { id: number; course_name: string }
   created_at: string
+}
+
+// types/slide.ts
+export interface Slide {
+  id: number
+  title: string
+  description: string | null
+  image: string
+  link: string | null
+  order: number
+  is_active: boolean
 }
 ```
 
@@ -678,36 +822,36 @@ export interface Review {
 
 | Page                        | Route                        | API Endpoint(s)                      |
 |-----------------------------|------------------------------|--------------------------------------|
-| Home                        | `/`                          | `/slides`, `/courses?featured`, `/dashboard/stats` (if auth) |
-| Course Catalog              | `/courses`                   | `/courses`, `/data/course-filters`   |
+| Home (guest mode)           | `/`                          | `/slides`, `/categories`, `/courses?filter[is_featured]=true` |
+| Home (auth mode)            | `/`                          | Above + `/dashboard/stats`, `/dashboard/continue-learning`, `/dashboard/recent-activity` |
+| Course Catalog              | `/courses`                   | `/courses`, `/data/categories`       |
 | Course Detail               | `/courses/[id]`              | `/courses/{id}`, `/courses/{id}/reviews` |
 | Category List               | `/categories`                | `/categories`                        |
-| Category Courses            | `/categories/[id]`           | `/categories/{id}/courses`           |
+| Category Courses            | `/categories/[id]`           | `/categories/{id}`, `/categories/{id}/courses` |
 | Certificate Verification    | `/certificates/verify/[code]`| `/certificates/verify/{code}`        |
-| Search                      | `/search`                    | `/courses?filter[search]=...`        |
+| Search                      | `/search`                    | `/courses`, `/data/categories`       |
 
 ### Pages Requiring Auth (use `middleware: 'auth'`)
 
-| Page                        | Route                        | API Endpoint(s)                      |
-|-----------------------------|------------------------------|--------------------------------------|
-| My Learning                 | `/enrollments`               | `/enrollments`                       |
-| Enrollment Detail           | `/enrollments/[id]`          | `/enrollments/{id}`, `/courses/{id}/lessons` |
-| Lesson Viewer               | `/lessons/[id]`              | `/lessons/{id}`, `/lessons/{id}/progress` |
-| Quiz Info                   | `/quizzes/[id]`              | `/quizzes/{id}`, `/quizzes/{id}/attempts` |
-| Quiz Taking                 | `/quizzes/[id]/take`         | `/quizzes/{id}` (questions)          |
-| Quiz Results                | `/quizzes/[id]/results/[attemptId]` | `/quizzes/attempts/{id}`      |
-| My Certificates             | `/certificates`              | `/certificates`                      |
-| Certificate Detail          | `/certificates/[id]`         | `/certificates/{id}`                 |
-| Payment History             | `/payments`                  | `/payments`                          |
-| Payment Detail              | `/payments/[id]`             | `/payments/{id}`                     |
-| Checkout                    | `/payments/checkout`         | `/payments` (POST)                   |
-| My Reviews                  | `/reviews`                   | `/reviews`                           |
-| Notifications               | `/notifications`             | `/notifications`                     |
-| Profile                     | `/profile`                   | `/auth/profile`                      |
-| Edit Profile                | `/profile/edit`              | `/auth/profile` (PUT)                |
-| Change Password             | `/profile/change-password`   | `/auth/change-password`              |
-| Activity Log                | `/activity`                  | `/dashboard/activity-log`            |
-| Dashboard Stats             | `/` (auth mode)              | `/dashboard/stats`, `/dashboard/continue-learning`, `/dashboard/recent-activity` |
+| Page                        | Route                              | Layout     | API Endpoint(s)                      |
+|-----------------------------|------------------------------------|------------|--------------------------------------|
+| My Learning                 | `/enrollments`                     | default    | `/enrollments`                       |
+| Enrollment Detail           | `/enrollments/[id]`                | default    | `/enrollments/{id}`                  |
+| Lesson Viewer               | `/lessons/[id]`                    | learning   | `/lessons/{id}`, `/lessons/{id}/progress` |
+| Quiz Info                   | `/quizzes/[id]`                    | learning   | `/quizzes/{id}`, `/quizzes/{id}/attempts` |
+| Quiz Taking                 | `/quizzes/[id]/take`               | learning   | `/quizzes/{id}`, `/quizzes/{id}/attempts` |
+| Quiz Results                | `/quizzes/[id]/results/[attemptId]`| learning   | `/quizzes/attempts/{id}`             |
+| My Certificates             | `/certificates`                    | default    | `/certificates`                      |
+| Certificate Detail          | `/certificates/[id]`               | default    | `/certificates/{id}`                 |
+| Payment History             | `/payments`                        | default    | `/payments`                          |
+| Payment Detail              | `/payments/[id]`                   | default    | `/payments/{id}`                     |
+| Checkout                    | `/payments/checkout`               | default    | `/payments` (POST)                   |
+| My Reviews                  | `/reviews`                         | default    | `/reviews`                           |
+| Notifications               | `/notifications`                   | default    | `/notifications`                     |
+| Profile                     | `/profile`                         | default    | `/auth/profile`                      |
+| Edit Profile                | `/profile/edit`                    | default    | `/auth/profile` (PUT)                |
+| Change Password             | `/profile/change-password`         | default    | `/auth/change-password`              |
+| Activity Log                | `/activity`                        | default    | `/dashboard/activity-log`            |
 
 ---
 
@@ -738,63 +882,73 @@ FRONTEND_URL=http://localhost:3000
 
 ## Implementation Order
 
-### Phase 1: Foundation
+### Phase 1: Foundation (Complete)
 1. Project setup (Nuxt 3, TypeScript, shadcn-vue, Tailwind)
 2. Brand colors and base theme
 3. API client composable (`useApi`)
-4. Auth store and middleware
-5. Default layout (Navbar, Footer)
-6. Login and Register pages
+4. Auth store with localStorage persistence and middleware
+5. Default layout (Navbar, Footer, BottomNav)
+6. Login, Register, Forgot/Reset Password pages
+7. Auth client plugin for state restoration
 
-### Phase 2: Public Pages
-7. Home page (guest mode with slides, categories, featured courses)
-8. Course catalog with search, filters, and sorting
-9. Course detail page (public info, reviews, modules preview)
-10. Category browsing
-11. Search page
-12. Certificate verification (public)
+### Phase 2: Public Pages (Complete)
+8. Reusable components (StarRating, CourseCard, CourseGrid, CategoryCard, CategoryChips)
+9. Home page (guest mode: slides carousel, categories, featured courses)
+10. Course catalog with search, filters, sorting, pagination
+11. Course detail page (modules accordion, reviews tabs, enrollment card)
+12. Category browsing (grid + detail with paginated courses)
+13. Search page (reads `?q=` from navbar)
+14. Certificate verification (public)
 
-### Phase 3: Student Dashboard
-13. Home page (authenticated mode with stats, continue learning, activity)
-14. My Learning / Enrollments list
-15. Enrollment detail with course modules and progress
-16. Lesson viewer (video + text + documents)
-17. Quiz system (info, taking, results)
+### Phase 3: Student Dashboard (Complete)
+15. Dashboard components (StatsCards, ContinueLearning, RecentActivity)
+16. Home page (authenticated mode with dashboard)
+17. My Learning / Enrollments list with status filters
+18. Enrollment detail with module progress and lesson navigation
+19. Lesson viewer (video + text + documents + mark complete)
+20. Quiz system (info page, quiz taking with timer, results)
+21. Learning components (VideoPlayer, TextContent, QuizPlayer, ProgressBar, LessonViewer)
 
-### Phase 4: Transactions & Certificates
-18. Enrollment flow (enroll confirmation, payment checkout)
-19. Payment history and detail
-20. My Certificates list and detail
-21. Certificate download (PDF)
+### Phase 4: Transactions & Certificates (Pending)
+22. Enrollment flow (enroll confirmation, payment checkout)
+23. Payment history and detail
+24. My Certificates list and detail
+25. Certificate download (PDF)
 
-### Phase 5: Social & Profile
-22. Course reviews (read public, write auth)
-23. My Reviews management
-24. Notifications
-25. Profile view, edit, change password
-26. Activity log
+### Phase 5: Social & Profile (Pending)
+26. Course reviews (write review from course detail)
+27. My Reviews management
+28. Notifications page
+29. Profile view, edit, change password
+30. Activity log
 
-### Phase 6: Polish
-27. Error states (404, 401, 403, 500, network error)
-28. Loading skeletons
-29. SEO meta tags (course pages, categories)
-30. Responsive design refinements
-31. Dark mode support
+### Phase 6: Polish (Pending)
+31. Error states (404, 401, 403, 500, network error)
+32. Loading skeletons across all pages
+33. SEO meta tags (course pages, categories)
+34. Responsive design refinements
 
 ---
 
 ## Key Patterns
 
+### Data Fetching (SSR-compatible)
+
+Use `useAsyncData` + `apiFetch` for all page-level data:
+
+```typescript
+const { apiFetch } = useApi()
+
+const { data, status, error } = await useAsyncData('key', () =>
+  apiFetch<ApiResponse<Course[]>>('/courses', { params: { page: 1 } })
+)
+```
+
 ### Auth Guard on Action (Login-on-Action)
 
 For actions like "Enroll Now" on a public course page when the user is not logged in:
 
-```vue
-<!-- pages/courses/[id].vue -->
-<script setup lang="ts">
-const auth = useAuthStore()
-const route = useRoute()
-
+```typescript
 function handleEnroll() {
   if (!auth.isAuthenticated) {
     navigateTo(`/login?redirect=${encodeURIComponent(route.fullPath)}`)
@@ -802,12 +956,11 @@ function handleEnroll() {
   }
   // proceed with enrollment
 }
-</script>
 ```
 
 ### Image URLs
 
-Media URLs from the API may be relative. Prefix with the storage base:
+Media URLs from the API may be relative. Use `resolveImageUrl()`:
 
 ```typescript
 // utils/formatters.ts
@@ -819,37 +972,27 @@ export function resolveImageUrl(url: string | null): string | null {
 }
 ```
 
-### Pagination Composable
+### Component Auto-Import
+
+Nuxt auto-imports components using directory-based prefixes. For example:
+- `components/course/CourseCard.vue` → `<CourseCard />`
+- `components/review/StarRating.vue` → `<ReviewStarRating />`
+- `components/dashboard/StatsCards.vue` → `<DashboardStatsCards />`
+- `components/ui/card/Card.vue` → `<Card />`
+
+### Class Utilities
+
+Use `cn()` from `lib/utils.ts` for merging Tailwind classes:
 
 ```typescript
-// composables/usePagination.ts
-export function usePagination<T>(endpoint: string, filters?: Ref<Record<string, any>>) {
-  const items = ref<T[]>([])
-  const page = ref(1)
-  const hasMore = ref(true)
-  const loading = ref(false)
-
-  async function loadMore() {
-    if (loading.value || !hasMore.value) return
-    loading.value = true
-    const { apiFetch } = useApi()
-    const res = await apiFetch(endpoint, {
-      params: { page: page.value, per_page: 20, ...filters?.value }
-    })
-    items.value.push(...res.data)
-    hasMore.value = page.value < res.pagination.total_pages
-    page.value++
-    loading.value = false
-  }
-
-  return { items, loading, hasMore, loadMore }
-}
+import { cn } from '@/lib/utils'
+cn('px-4 py-2', isActive && 'bg-primary-500 text-white')
 ```
 
 ---
 
 ## Screen Reference
 
-Refer to `Docs/stitch_ui.md` for detailed UI/UX design prompts for every screen. The website pages should follow the same design language described there, adapted from mobile to web layout (responsive, desktop-first with mobile support).
+Refer to `Docs/stitch_ui.md` for detailed UI/UX design prompts for every screen. The website pages follow the same design language, adapted from mobile to web layout (responsive, desktop-first with mobile support).
 
-Total estimated pages: **~30 pages** across public browsing, authentication, student dashboard, learning, and profile management.
+Total pages: **~30 pages** across public browsing, authentication, student dashboard, learning, and profile management.

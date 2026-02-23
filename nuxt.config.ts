@@ -8,13 +8,14 @@ export default defineNuxtConfig({
     {
       path: '~/components',
       extensions: ['.vue'],
+      pathPrefix: false,
     },
   ],
 
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api',
-      storageBase: process.env.NUXT_PUBLIC_STORAGE_BASE || 'http://localhost:8000/storage',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://eduplex.test:8001/api',
+      storageBase: process.env.NUXT_PUBLIC_STORAGE_BASE || 'http://eduplex.test:8001/storage',
     }
   },
 
