@@ -4,6 +4,13 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@pinia/nuxt'],
 
+  components: [
+    {
+      path: '~/components',
+      extensions: ['.vue'],
+    },
+  ],
+
   runtimeConfig: {
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api',
@@ -27,6 +34,8 @@ export default defineNuxtConfig({
     '/dashboard/**': { ssr: false },
     '/profile/**': { ssr: false },
     '/enrollments/**': { ssr: false },
+    '/lessons/**': { ssr: false },
+    '/quizzes/**': { ssr: false },
     '/payments/**': { ssr: false },
     '/certificates': { ssr: false },
   },
