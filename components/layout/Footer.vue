@@ -1,87 +1,88 @@
 <template>
-  <footer class="bg-primary-900 text-white">
+  <footer class="bg-white border-t border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
         <!-- Brand -->
-        <div class="md:col-span-1">
-          <div class="flex items-center gap-2 mb-4">
-            <BookOpen class="w-6 h-6 text-accent-400" />
-            <span class="text-lg font-bold">BoomLearning</span>
+        <div class="col-span-2 md:col-span-1">
+          <div class="flex items-center gap-2 mb-3">
+            <BookOpen class="w-5 h-5 text-primary-600" />
+            <span class="text-base font-bold text-gray-900">BoomLearning</span>
           </div>
-          <p class="text-primary-200 text-sm leading-relaxed">
-            Empowering learners with quality education. Explore courses, earn certificates, and advance your career.
+          <p class="text-sm text-gray-500 leading-relaxed">
+            Empowering learners worldwide through quality education and expert-led courses.
           </p>
         </div>
 
-        <!-- Quick Links -->
+        <!-- Platform -->
         <div>
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-primary-300 mb-4">Explore</h3>
-          <ul class="space-y-2">
-            <li v-for="link in quickLinks" :key="link.to">
-              <NuxtLink :to="link.to" class="text-sm text-primary-200 hover:text-white transition-colors">
+          <h3 class="text-sm font-semibold text-gray-900 mb-4">Platform</h3>
+          <ul class="space-y-2.5">
+            <li v-for="link in platformLinks" :key="link.to">
+              <NuxtLink :to="link.to" class="text-sm text-gray-500 hover:text-primary-600 transition-colors">
                 {{ link.label }}
               </NuxtLink>
             </li>
           </ul>
         </div>
 
-        <!-- Account -->
+        <!-- Support -->
         <div>
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-primary-300 mb-4">Account</h3>
-          <ul class="space-y-2">
-            <li v-for="link in accountLinks" :key="link.to">
-              <NuxtLink :to="link.to" class="text-sm text-primary-200 hover:text-white transition-colors">
+          <h3 class="text-sm font-semibold text-gray-900 mb-4">Support</h3>
+          <ul class="space-y-2.5">
+            <li v-for="link in supportLinks" :key="link.label">
+              <NuxtLink v-if="link.to" :to="link.to" class="text-sm text-gray-500 hover:text-primary-600 transition-colors">
                 {{ link.label }}
               </NuxtLink>
+              <span v-else class="text-sm text-gray-500">{{ link.label }}</span>
             </li>
           </ul>
         </div>
 
-        <!-- Contact -->
+        <!-- Connect -->
         <div>
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-primary-300 mb-4">Contact</h3>
-          <ul class="space-y-3">
-            <li class="flex items-center gap-2 text-sm text-primary-200">
-              <Mail class="w-4 h-4 shrink-0" />
-              <span>support@boomlearning.com</span>
-            </li>
-            <li class="flex items-center gap-2 text-sm text-primary-200">
-              <Phone class="w-4 h-4 shrink-0" />
-              <span>+1 (555) 123-4567</span>
-            </li>
-            <li class="flex items-start gap-2 text-sm text-primary-200">
-              <MapPin class="w-4 h-4 shrink-0 mt-0.5" />
-              <span>123 Learning Street, Education City</span>
-            </li>
-          </ul>
+          <h3 class="text-sm font-semibold text-gray-900 mb-4">Connect</h3>
+          <div class="flex gap-3">
+            <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-50 hover:text-primary-600 transition-colors">
+              <Globe class="w-4 h-4" />
+            </a>
+            <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-50 hover:text-primary-600 transition-colors">
+              <Mail class="w-4 h-4" />
+            </a>
+          </div>
         </div>
       </div>
 
-      <hr class="my-8 border-primary-700" />
+      <hr class="my-8 border-gray-200" />
 
       <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-        <p class="text-sm text-primary-300">
+        <p class="text-sm text-gray-400">
           &copy; {{ currentYear }} BoomLearning. All rights reserved.
         </p>
+        <div class="flex items-center gap-6">
+          <span class="text-sm text-gray-400">English (US)</span>
+          <a href="#" class="text-sm text-gray-400 hover:text-primary-600">Contact Support</a>
+        </div>
       </div>
     </div>
   </footer>
 </template>
 
 <script setup lang="ts">
-import { BookOpen, Mail, Phone, MapPin } from 'lucide-vue-next'
+import { BookOpen, Globe, Mail } from 'lucide-vue-next'
 
 const currentYear = new Date().getFullYear()
 
-const quickLinks = [
-  { label: 'Courses', to: '/courses' },
+const platformLinks = [
+  { label: 'Browse Courses', to: '/courses' },
   { label: 'Categories', to: '/categories' },
-  { label: 'Verify Certificate', to: '/certificates/verify' },
-]
-
-const accountLinks = [
   { label: 'My Learning', to: '/enrollments' },
   { label: 'Certificates', to: '/certificates' },
-  { label: 'Profile', to: '/profile' },
+]
+
+const supportLinks = [
+  { label: 'Help Center', to: null },
+  { label: 'Community', to: null },
+  { label: 'Terms of Service', to: null },
+  { label: 'Privacy Policy', to: null },
 ]
 </script>

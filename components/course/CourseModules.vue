@@ -1,13 +1,18 @@
 <template>
-  <div class="border border-gray-200 rounded-lg divide-y divide-gray-200">
-    <div v-for="mod in modules" :key="mod.id">
+  <div class="space-y-3">
+    <div v-for="(mod, index) in modules" :key="mod.id" class="bg-white rounded-xl border border-gray-100 overflow-hidden">
       <button
         @click="toggle(mod.id)"
-        class="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+        class="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors text-left"
       >
-        <div>
-          <p class="font-medium text-sm text-gray-900">{{ mod.module_title }}</p>
-          <p class="text-xs text-gray-500 mt-0.5">{{ mod.lessons_count }} lessons</p>
+        <div class="flex items-center gap-3">
+          <span class="w-7 h-7 rounded-lg bg-primary-50 text-primary-600 text-xs font-bold flex items-center justify-center shrink-0">
+            {{ index + 1 }}
+          </span>
+          <div>
+            <p class="font-medium text-sm text-gray-900">{{ mod.module_title }}</p>
+            <p class="text-xs text-gray-400 mt-0.5">{{ mod.lessons_count }} lessons</p>
+          </div>
         </div>
         <ChevronDown
           class="w-4 h-4 text-gray-400 transition-transform shrink-0"
@@ -24,22 +29,24 @@
         leave-to-class="max-h-0 opacity-0"
       >
         <div v-if="openModules.has(mod.id)" class="overflow-hidden">
-          <ul class="bg-gray-50 divide-y divide-gray-100">
+          <ul class="border-t border-gray-100 divide-y divide-gray-50">
             <li
               v-for="lesson in mod.lessons ?? []"
               :key="lesson.id"
-              class="flex items-center gap-3 px-4 py-2.5 pl-8"
+              class="flex items-center gap-3 px-5 py-3 pl-16 hover:bg-gray-50 transition-colors"
             >
-              <component
-                :is="lessonIcon[lesson.lesson_type] || FileText"
-                class="w-4 h-4 text-gray-400 shrink-0"
-              />
+              <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center shrink-0">
+                <component
+                  :is="lessonIcon[lesson.lesson_type] || FileText"
+                  class="w-4 h-4 text-gray-400"
+                />
+              </div>
               <span class="text-sm text-gray-700 flex-1">{{ lesson.lesson_title }}</span>
               <span v-if="lesson.duration_minutes" class="text-xs text-gray-400">
                 {{ lesson.duration_minutes }}m
               </span>
             </li>
-            <li v-if="!mod.lessons?.length" class="px-4 py-3 pl-8 text-sm text-gray-400">
+            <li v-if="!mod.lessons?.length" class="px-5 py-4 pl-16 text-sm text-gray-400">
               No lessons available
             </li>
           </ul>
@@ -47,7 +54,7 @@
       </Transition>
     </div>
 
-    <div v-if="modules.length === 0" class="px-4 py-8 text-center text-sm text-gray-400">
+    <div v-if="modules.length === 0" class="bg-white rounded-xl border border-gray-100 px-5 py-12 text-center text-sm text-gray-400">
       No modules available yet
     </div>
   </div>

@@ -1,6 +1,6 @@
 <template>
   <NuxtLink :to="`/categories/${category.id}`" class="group block">
-    <div class="bg-white rounded-xl border border-gray-100 p-5 hover:shadow-md hover:border-primary-100 transition-all duration-200">
+    <div class="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md hover:border-primary-100 transition-all duration-200 min-w-[140px]">
       <div :class="['w-12 h-12 rounded-xl flex items-center justify-center mb-3', iconBg]">
         <component :is="CategoryIcon" :class="['w-5 h-5', iconColor]" />
       </div>

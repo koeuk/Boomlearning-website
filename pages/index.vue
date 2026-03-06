@@ -1,48 +1,38 @@
 <template>
   <div>
-    <!-- Authenticated Dashboard Section -->
-    <template v-if="auth.isAuthenticated">
-      <section class="relative overflow-hidden bg-gradient-to-br from-primary-700 via-primary-600 to-primary-800 text-white">
-        <div class="absolute inset-0">
-          <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-white/5" />
-          <div class="absolute -left-10 -bottom-10 w-60 h-60 rounded-full bg-white/5" />
-          <div class="absolute right-1/3 top-1/4 w-40 h-40 rounded-full bg-accent-500/10" />
-        </div>
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/10">
-              <span class="text-xl font-bold">{{ auth.user?.full_name?.[0]?.toUpperCase() }}</span>
-            </div>
-            <div>
-              <h1 class="text-xl md:text-2xl font-bold">Welcome back, {{ auth.user?.full_name?.split(' ')[0] }}!</h1>
-              <p class="text-primary-200 text-sm">Here's your learning progress</p>
-            </div>
+    <!-- Authenticated Welcome Hero -->
+    <section v-if="auth.isAuthenticated" class="bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-100 rounded-2xl p-8 md:p-10">
+          <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+            Welcome back, {{ auth.user?.full_name?.split(' ')[0] }}!
+          </h1>
+          <p class="text-gray-500 max-w-xl mb-6">
+            You're doing great! Ready to dive back into your learning journey? Pick up where you left off.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <NuxtLink
+              to="/enrollments"
+              class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-medium px-6 py-2.5 rounded-lg transition-colors"
+            >
+              Continue Learning
+            </NuxtLink>
+            <NuxtLink
+              to="/profile"
+              class="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-gray-700 font-medium px-6 py-2.5 rounded-lg border border-gray-200 transition-colors"
+            >
+              View Progress
+            </NuxtLink>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section v-if="dashStats || dashLoading" class="bg-gray-50/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-          <div class="-mt-10 relative z-10">
-            <DashboardStatsCards :stats="dashStats" :loading="dashLoading" />
-          </div>
-
-          <div class="grid lg:grid-cols-5 gap-6">
-            <div class="lg:col-span-3">
-              <DashboardContinueLearning :enrollments="dashEnrollments" :loading="dashLoading" />
-            </div>
-            <div class="lg:col-span-2">
-              <DashboardRecentActivity :activities="dashActivities" :loading="dashLoading" />
-            </div>
-          </div>
-        </div>
-      </section>
-    </template>
-
-    <!-- Guest Hero / Slides Carousel -->
-    <template v-else>
-      <section v-if="slides.length > 0" class="relative bg-gray-900 overflow-hidden">
-        <div class="relative h-[300px] sm:h-[400px] md:h-[480px]">
+    <!-- Guest Hero with Slideshow -->
+    <section v-else>
+      <!-- Slides Carousel -->
+      <div v-if="slides.length > 0" class="relative bg-gray-900 overflow-hidden">
+        <div class="relative h-[250px] sm:h-[350px] md:h-[420px]">
           <template v-for="(slide, index) in slides" :key="slide.id">
             <div
               class="absolute inset-0 transition-opacity duration-700"
@@ -102,17 +92,17 @@
             />
           </div>
         </template>
-      </section>
+      </div>
 
       <!-- Fallback Hero (no slides) -->
-      <section v-else class="bg-gradient-to-br from-primary-600 to-primary-800 text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+      <div v-else class="bg-gradient-to-br from-primary-600 to-primary-800 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
           <div class="max-w-2xl">
-            <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-4">
+            <h1 class="text-3xl md:text-4xl font-bold leading-tight mb-4">
               Learn, Grow, Succeed
             </h1>
-            <p class="text-lg text-primary-100 mb-8">
-              Explore our courses and start your learning journey today. Gain new skills, earn certificates, and advance your career.
+            <p class="text-base text-primary-100 mb-6">
+              Explore our courses and start your learning journey today.
             </p>
             <div class="flex flex-wrap gap-3">
               <NuxtLink
@@ -131,90 +121,42 @@
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- Stats -->
-      <section class="bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-100">
-              <div class="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mx-auto mb-3">
-                <BookOpen class="w-6 h-6 text-blue-600" />
-              </div>
-              <div class="text-3xl font-extrabold text-gray-900">50+</div>
-              <div class="text-sm text-gray-500 mt-1">Courses</div>
-            </div>
-            <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-100">
-              <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-3">
-                <Users class="w-6 h-6 text-emerald-600" />
-              </div>
-              <div class="text-3xl font-extrabold text-gray-900">500+</div>
-              <div class="text-sm text-gray-500 mt-1">Students</div>
-            </div>
-            <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-violet-50 to-violet-100/50 border border-violet-100">
-              <div class="w-12 h-12 rounded-xl bg-violet-500/10 flex items-center justify-center mx-auto mb-3">
-                <GraduationCap class="w-6 h-6 text-violet-600" />
-              </div>
-              <div class="text-3xl font-extrabold text-gray-900">200+</div>
-              <div class="text-sm text-gray-500 mt-1">Graduates</div>
-            </div>
-            <div class="text-center p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/50 border border-amber-100">
-              <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mx-auto mb-3">
-                <Award class="w-6 h-6 text-amber-600" />
-              </div>
-              <div class="text-3xl font-extrabold text-gray-900">100+</div>
-              <div class="text-sm text-gray-500 mt-1">Certificates</div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </template>
-
-    <!-- Categories (both modes) -->
+    <!-- Browse Categories -->
     <section v-if="categories.length > 0">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-        <div class="flex items-end justify-between mb-6">
-          <div>
-            <h2 class="text-2xl font-bold text-gray-900">Browse Categories</h2>
-            <p class="text-gray-400 text-sm mt-1">Find courses in your area of interest</p>
-          </div>
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold text-gray-900">Browse Categories</h2>
           <NuxtLink
             to="/categories"
-            class="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 shrink-0"
+            class="text-sm font-medium text-primary-600 hover:text-primary-700"
           >
-            View All
-            <ArrowRight class="w-4 h-4" />
+            See all
           </NuxtLink>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          <CategoryCard v-for="cat in categories.slice(0, 10)" :key="cat.id" :category="cat" />
-        </div>
-        <div class="mt-6 text-center sm:hidden">
-          <NuxtLink
-            to="/categories"
-            class="inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700"
-          >
-            View All Categories
-            <ArrowRight class="w-4 h-4" />
-          </NuxtLink>
+        <div class="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+          <CategoryCardCompact
+            v-for="cat in categories.slice(0, 8)"
+            :key="cat.id"
+            :category="cat"
+            class="shrink-0"
+          />
         </div>
       </div>
     </section>
 
-    <!-- Featured Courses (both modes) -->
+    <!-- Featured Courses -->
     <section class="bg-gray-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
-        <div class="flex items-end justify-between mb-6">
-          <div>
-            <h2 class="text-2xl font-bold text-gray-900">Featured Courses</h2>
-            <p class="text-gray-400 text-sm mt-1">Handpicked courses to help you get started</p>
-          </div>
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold text-gray-900">Featured Courses</h2>
           <NuxtLink
             to="/courses"
-            class="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 shrink-0"
+            class="text-sm font-medium text-primary-600 hover:text-primary-700"
           >
             View All
-            <ArrowRight class="w-4 h-4" />
           </NuxtLink>
         </div>
         <CourseGrid
@@ -222,15 +164,6 @@
           :loading="featuredStatus === 'pending'"
           empty-message="No featured courses available yet."
         />
-        <div class="mt-6 text-center sm:hidden">
-          <NuxtLink
-            to="/courses"
-            class="inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700"
-          >
-            Browse All Courses
-            <ArrowRight class="w-4 h-4" />
-          </NuxtLink>
-        </div>
       </div>
     </section>
 
@@ -240,21 +173,21 @@
         <div class="absolute -right-20 -top-20 w-80 h-80 rounded-full bg-white/5" />
         <div class="absolute -left-10 -bottom-10 w-60 h-60 rounded-full bg-white/5" />
       </div>
-      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Start Learning?</h2>
-        <p class="text-primary-200 mb-8 max-w-lg mx-auto">
+      <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <h2 class="text-2xl md:text-3xl font-bold text-white mb-3">Ready to Start Learning?</h2>
+        <p class="text-primary-200 mb-6 max-w-lg mx-auto text-sm">
           Join thousands of students who are already learning and growing with BoomLearning.
         </p>
         <div class="flex flex-wrap justify-center gap-4">
           <NuxtLink
             to="/courses"
-            class="inline-flex items-center gap-2 bg-white text-primary-700 font-semibold px-8 py-3.5 rounded-xl hover:bg-gray-50 transition-colors shadow-lg shadow-primary-900/20"
+            class="inline-flex items-center gap-2 bg-white text-primary-700 font-semibold px-8 py-3 rounded-xl hover:bg-gray-50 transition-colors shadow-lg shadow-primary-900/20"
           >
             Explore Courses
           </NuxtLink>
           <NuxtLink
             to="/register"
-            class="inline-flex items-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors shadow-lg shadow-primary-900/20"
+            class="inline-flex items-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-semibold px-8 py-3 rounded-xl transition-colors shadow-lg shadow-primary-900/20"
           >
             Get Started Free
           </NuxtLink>
@@ -265,12 +198,11 @@
 </template>
 
 <script setup lang="ts">
-import { BookOpen, GraduationCap, Award, Users, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-vue-next'
+import { BookOpen, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-vue-next'
 import type { ApiResponse } from '~/types/api'
 import type { Slide } from '~/types/slide'
 import type { Category } from '~/types/category'
 import type { Course } from '~/types/course'
-import type { Enrollment } from '~/types/enrollment'
 
 useHead({ title: 'BoomLearning - Learn, Grow, Succeed' })
 
@@ -292,45 +224,6 @@ const { data: featuredData, status: featuredStatus } = await useAsyncData('home-
   apiFetch<ApiResponse<Course[]>>('/courses', { params: { 'filter[is_featured]': true } })
 )
 const featuredCourses = computed(() => featuredData.value?.data ?? [])
-
-// Authenticated dashboard data
-interface DashboardStats {
-  enrolled_courses: number
-  completed_courses: number
-  in_progress_courses: number
-  certificates_earned: number
-}
-
-interface ActivityItem {
-  id: string
-  type: string
-  description: string
-  created_at: string
-}
-
-const dashStats = ref<DashboardStats | null>(null)
-const dashEnrollments = ref<Enrollment[]>([])
-const dashActivities = ref<ActivityItem[]>([])
-const dashLoading = ref(false)
-
-async function loadDashboard() {
-  if (!auth.isAuthenticated) return
-  dashLoading.value = true
-  try {
-    const [statsRes, enrollRes, activityRes] = await Promise.all([
-      apiFetch<ApiResponse<DashboardStats>>('/dashboard/stats'),
-      apiFetch<ApiResponse<Enrollment[]>>('/dashboard/continue-learning'),
-      apiFetch<ApiResponse<ActivityItem[]>>('/dashboard/recent-activity'),
-    ])
-    dashStats.value = statsRes.data
-    dashEnrollments.value = enrollRes.data
-    dashActivities.value = activityRes.data
-  } catch {
-    // Dashboard data is optional, don't break the page
-  } finally {
-    dashLoading.value = false
-  }
-}
 
 // Slide carousel
 const currentSlide = ref(0)
@@ -354,7 +247,6 @@ onMounted(() => {
   if (slideCount.value > 1) {
     slideInterval = setInterval(nextSlide, 5000)
   }
-  loadDashboard()
 })
 
 onUnmounted(() => {

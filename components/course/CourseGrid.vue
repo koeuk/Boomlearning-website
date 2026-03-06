@@ -1,34 +1,37 @@
 <template>
   <div>
     <!-- Skeleton Loading -->
-    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      <div v-for="i in 8" :key="i">
-        <Card class="overflow-hidden">
-          <Skeleton class="aspect-video w-full" />
-          <CardHeader class="pb-2">
-            <Skeleton class="h-3 w-20" />
-            <Skeleton class="h-5 w-full mt-1" />
-            <Skeleton class="h-5 w-3/4" />
-          </CardHeader>
-          <CardContent class="pb-2">
-            <Skeleton class="h-3 w-24" />
-            <Skeleton class="h-4 w-28 mt-2" />
-          </CardContent>
-          <CardFooter class="pt-2 border-t border-gray-100">
-            <Skeleton class="h-5 w-16" />
-          </CardFooter>
-        </Card>
+    <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-for="i in 6" :key="i" class="bg-white rounded-xl border border-gray-100 overflow-hidden">
+        <Skeleton class="aspect-video w-full" />
+        <div class="p-4 space-y-3">
+          <div class="flex gap-2">
+            <Skeleton class="h-5 w-20 rounded" />
+            <Skeleton class="h-5 w-24 rounded" />
+          </div>
+          <Skeleton class="h-5 w-full" />
+          <Skeleton class="h-5 w-3/4" />
+          <div class="flex items-center justify-between pt-2">
+            <div class="flex items-center gap-2">
+              <Skeleton class="w-6 h-6 rounded-full" />
+              <Skeleton class="h-3 w-24" />
+            </div>
+            <Skeleton class="h-4 w-16" />
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Empty State -->
     <div v-else-if="courses.length === 0" class="text-center py-16">
-      <BookOpen class="w-12 h-12 text-gray-300 mx-auto mb-4" />
+      <div class="w-16 h-16 rounded-2xl bg-gray-50 flex items-center justify-center mx-auto mb-4">
+        <BookOpen class="w-8 h-8 text-gray-300" />
+      </div>
       <p class="text-gray-500">{{ emptyMessage || 'No courses found.' }}</p>
     </div>
 
     <!-- Course Grid -->
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <CourseCard v-for="course in courses" :key="course.id" :course="course" />
     </div>
   </div>
