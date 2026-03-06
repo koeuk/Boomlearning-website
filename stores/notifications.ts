@@ -16,7 +16,7 @@ export const useNotificationStore = defineStore('notifications', {
       this.unreadCount = this.items.filter(n => !n.is_read).length
     },
 
-    async markAsRead(id: number) {
+    async markAsRead(id: string) {
       const { apiFetch } = useApi()
       await apiFetch(`/notifications/${id}/read`, { method: 'PUT' })
       const item = this.items.find(n => n.id === id)
@@ -33,7 +33,7 @@ export const useNotificationStore = defineStore('notifications', {
       this.unreadCount = 0
     },
 
-    async remove(id: number) {
+    async remove(id: string) {
       const { apiFetch } = useApi()
       await apiFetch(`/notifications/${id}`, { method: 'DELETE' })
       const index = this.items.findIndex(n => n.id === id)

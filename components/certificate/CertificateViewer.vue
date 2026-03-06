@@ -11,8 +11,8 @@
       <p class="text-sm text-primary-600 font-medium uppercase tracking-wider mb-2">Certificate of Completion</p>
       <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-1">{{ certificate.student_name }}</h2>
       <p class="text-gray-500 mb-6">has successfully completed</p>
-      <h3 class="text-xl font-semibold text-primary-700 mb-1">{{ certificate.course_name }}</h3>
-      <p class="text-sm text-gray-500 mb-6">{{ certificate.course_code }}</p>
+      <h3 class="text-xl font-semibold text-primary-700 mb-1">{{ certificate.course.course_name }}</h3>
+      <p class="text-sm text-gray-500 mb-6">{{ certificate.course.course_code }}</p>
 
       <Separator class="my-6 max-w-xs mx-auto" />
 

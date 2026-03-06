@@ -126,7 +126,7 @@ definePageMeta({
 
 const route = useRoute()
 const { apiFetch } = useApi()
-const quizId = Number(route.params.id)
+const quizId = route.params.id as string
 
 const { data: quizData, error } = await useAsyncData(
   `quiz-${quizId}`,

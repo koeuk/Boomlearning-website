@@ -1,108 +1,96 @@
-# Script Setup Reorder - Summary
+# Changes Summary
 
+## 1. Script Setup Reorder
 Moved `<script setup>` blocks below `<template>` in **114 Vue files** across the project.
 
-## Files Updated
+## 2. Type Definitions — Aligned with Implementation Guide
 
-### Pages (28 files)
-- `pages/index.vue`
-- `pages/login.vue`
-- `pages/register.vue`
-- `pages/forgot-password.vue`
-- `pages/reset-password.vue`
-- `pages/search.vue`
-- `pages/courses/index.vue`
-- `pages/courses/[id].vue`
-- `pages/categories/index.vue`
-- `pages/categories/[id].vue`
-- `pages/enrollments/index.vue`
-- `pages/enrollments/[id].vue`
-- `pages/lessons/[id].vue`
-- `pages/quizzes/[id].vue`
-- `pages/quizzes/[id]/take.vue`
-- `pages/quizzes/[id]/results/[attemptId].vue`
-- `pages/certificates/index.vue`
-- `pages/certificates/[id].vue`
-- `pages/certificates/verify/[code].vue`
-- `pages/payments/index.vue`
-- `pages/payments/[uuid].vue`
-- `pages/payments/checkout.vue`
-- `pages/profile/index.vue`
-- `pages/profile/edit.vue`
-- `pages/profile/change-password.vue`
-- `pages/reviews/index.vue`
-- `pages/notifications/index.vue`
-- `pages/activity/index.vue`
+All `id` fields changed from `number` to `string` (UUID) across all types.
 
-### Components - Layout (3 files)
-- `components/layout/Navbar.vue`
-- `components/layout/Footer.vue`
-- `components/layout/BottomNav.vue`
+### types/course.ts
+- `id: number` → `id: string` (Course, Module, Lesson, Document)
+- Added: `image_url`, `pricing_type`, `is_free`, `status`, `created_at`, `updated_at`, `lessons` (CourseLessonSummary[])
+- Added: `CourseLessonSummary` interface
+- Added: `LessonQuiz` interface (replaces raw Quiz ref on Lesson)
+- Lesson: added `image_url`, `formatted_duration`, `file_name` on Document
+- Lesson: `content` now `string | null`, `lesson_type` includes `'document'`
+- Removed inline `LessonProgress` (moved to `types/progress.ts`)
 
-### Components - Dashboard (3 files)
-- `components/dashboard/RecentActivity.vue`
-- `components/dashboard/ContinueLearning.vue`
-- `components/dashboard/StatsCards.vue`
+### types/category.ts
+- `id: number` → `id: string`
+- `image` → `image_url`
+- Added: `is_active`
 
-### Components - Learning (5 files)
-- `components/learning/QuizPlayer.vue`
-- `components/learning/LessonViewer.vue`
-- `components/learning/ProgressBar.vue`
-- `components/learning/VideoPlayer.vue`
-- `components/learning/TextContent.vue`
+### types/user.ts
+- `id: number` → `id: string`
+- `updated_at` now required (was optional)
 
-### Components - Domain (10 files)
-- `components/course/CourseCard.vue`
-- `components/course/CourseGrid.vue`
-- `components/course/CourseFilters.vue`
-- `components/course/CourseModules.vue`
-- `components/course/CourseReviews.vue`
-- `components/category/CategoryChips.vue`
-- `components/category/CategoryCard.vue`
-- `components/review/StarRating.vue`
-- `components/review/RatingSummary.vue`
-- `components/review/ReviewCard.vue`
+### types/enrollment.ts
+- `id: number` → `id: string`
+- Added: `completion_date`, `certificate_issued`, `last_accessed`
 
-### Components - Certificate (1 file)
-- `components/certificate/CertificateViewer.vue`
+### types/quiz.ts
+- `id: number` → `id: string` (Quiz, Question, QuizOption, QuizAttempt)
+- Added: `randomize_questions`, `question_order`, `option_order`
+- QuizAttempt: renamed fields to match guide (`attempt_number`, `score_percentage`, `max_points`, `time_taken_minutes`)
 
-### Components - UI / shadcn-vue (64 files)
-- `components/ui/alert/` (3 files)
-- `components/ui/avatar/` (3 files)
-- `components/ui/badge/` (1 file)
-- `components/ui/button/` (1 file)
-- `components/ui/card/` (6 files)
-- `components/ui/dialog/` (9 files)
-- `components/ui/dropdown-menu/` (14 files)
-- `components/ui/input/` (1 file)
-- `components/ui/label/` (1 file)
-- `components/ui/select/` (11 files)
-- `components/ui/separator/` (1 file)
-- `components/ui/sheet/` (8 files)
-- `components/ui/skeleton/` (1 file)
-- `components/ui/tabs/` (4 files)
-- `components/ui/textarea/` (1 file)
+### types/payment.ts
+- `id: number` → `id: string`
+- `course` changed from full `Course` to nested object `{ id, course_name, course_code, thumbnail }`
 
-## Before / After
+### types/certificate.ts
+- `id: number` → `id: string`
+- Added: `verification_url`, `download_url`
+- Added: nested `course` object `{ id, course_name, course_code, category, thumbnail }`
+- Kept: `student_name`, `instructor_name` (used in templates)
 
-**Before:**
-```vue
-<script setup lang="ts">
-// ...
-</script>
+### types/review.ts
+- `id: number` → `id: string`
+- `student` → `user` (with `id` field added)
+- `course` now includes `image_url`
+- Added: `updated_at`
 
-<template>
-  <!-- ... -->
-</template>
-```
+### types/notification.ts
+- `id: number` → `id: string`
+- Removed: `related_type` (not in guide)
 
-**After:**
-```vue
-<template>
-  <!-- ... -->
-</template>
+### types/slide.ts
+- `id: number` → `id: string`
+- `description` → `subtitle`
+- `image` → `image_url`
+- `link` → `button_url`
+- Added: `button_text`
+- Removed: `is_active` (not in guide)
 
-<script setup lang="ts">
-// ...
-</script>
-```
+### types/progress.ts (NEW)
+- `LessonProgress` with full fields: `progress_percentage`, `video_last_position`, `scroll_position`, `first_accessed`, `last_accessed`, `completed_at`
+- `LessonProgressSummary` interface
+
+## 3. Missing Files Created
+
+### Composables
+- `composables/useAuth.ts` — Auth helper with `requireAuth()`
+- `composables/useTheme.ts` — Dark mode toggle
+- `composables/usePagination.ts` — Generic pagination composable
+
+### Stores
+- `stores/cart.ts` — Enrollment/payment cart store
+
+### Components
+- `components/layout/SearchBar.vue` — Reusable search bar
+- `components/certificate/CertificateCard.vue` — Certificate list card
+- `components/review/ReviewForm.vue` — Review submission form
+
+### Utils
+- `utils/validators.ts` — Added `isMaxLength`, `isPasswordStrong`, `isValidPhone`
+
+## 4. Component & Page Fixes
+
+- `ReviewCard.vue`: `review.student` → `review.user`
+- `CourseReviews.vue`: `courseId: number` → `courseId: string`
+- `CategoryCard.vue`: `category.image` → `category.image_url`, hash-based index for UUID
+- `CertificateViewer.vue`: `certificate.course_name` → `certificate.course.course_name`
+- `pages/certificates/[id].vue`: Updated to use nested `certificate.course`
+- `pages/index.vue`: `slide.image` → `slide.image_url`, `slide.description` → `slide.subtitle`, `slide.link` → `slide.button_url`
+- `stores/notifications.ts`: `id: number` → `id: string` in method params
+- All pages: Removed `Number(route.params.id)` → `route.params.id as string`

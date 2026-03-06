@@ -73,7 +73,7 @@ import type { Course } from '~/types/course'
 
 const route = useRoute()
 const { apiFetch } = useApi()
-const categoryId = Number(route.params.id)
+const categoryId = route.params.id as string
 const page = ref(1)
 
 // Fetch category details

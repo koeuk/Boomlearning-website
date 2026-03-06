@@ -50,7 +50,7 @@
               :class="index === currentSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'"
             >
               <img
-                :src="resolveImageUrl(slide.image)!"
+                :src="resolveImageUrl(slide.image_url)!"
                 :alt="slide.title"
                 class="w-full h-full object-cover"
               />
@@ -61,15 +61,15 @@
                     <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3">
                       {{ slide.title }}
                     </h2>
-                    <p v-if="slide.description" class="text-sm sm:text-base text-gray-200 mb-6">
-                      {{ slide.description }}
+                    <p v-if="slide.subtitle" class="text-sm sm:text-base text-gray-200 mb-6">
+                      {{ slide.subtitle }}
                     </p>
                     <NuxtLink
-                      v-if="slide.link"
-                      :to="slide.link"
+                      v-if="slide.button_url"
+                      :to="slide.button_url"
                       class="inline-flex items-center gap-2 bg-accent-500 hover:bg-accent-600 text-white font-medium px-6 py-3 rounded-lg transition-colors"
                     >
-                      Learn More
+                      {{ slide.button_text || 'Learn More' }}
                       <ArrowRight class="w-4 h-4" />
                     </NuxtLink>
                   </div>
@@ -303,7 +303,7 @@ interface DashboardStats {
 }
 
 interface ActivityItem {
-  id: number
+  id: string
   type: string
   description: string
   created_at: string

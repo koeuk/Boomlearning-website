@@ -55,7 +55,7 @@ import type { PaginatedResponse } from '~/types/api'
 import type { Review } from '~/types/review'
 
 const props = defineProps<{
-  courseId: number
+  courseId: string
   averageRating: number
   reviewsCount: number
 }>()

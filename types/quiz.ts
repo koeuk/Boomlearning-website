@@ -1,11 +1,12 @@
 export interface Quiz {
-  id: number
+  id: string
   quiz_title: string
   instructions: string
   time_limit_minutes: number | null
   passing_score: number
   max_attempts: number | null
   show_correct_answers: boolean
+  randomize_questions: boolean
   total_points: number
   total_questions: number
   attempts_used: number
@@ -14,26 +15,29 @@ export interface Quiz {
 }
 
 export interface Question {
-  id: number
+  id: string
   question_text: string
   question_type: 'multiple_choice' | 'true_false' | 'text'
   points: number
+  question_order: number
   image_url: string | null
   options: QuizOption[]
 }
 
 export interface QuizOption {
-  id: number
+  id: string
   option_text: string
+  option_order: number
 }
 
 export interface QuizAttempt {
-  id: number
-  score: number
-  total_points: number
-  percentage: number
-  passed: boolean
+  id: string
+  attempt_number: number
+  score_percentage: number | null
+  total_points: number | null
+  max_points: number | null
+  passed: boolean | null
   started_at: string
-  completed_at: string | null
-  time_spent_minutes: number
+  submitted_at: string | null
+  time_taken_minutes: number | null
 }

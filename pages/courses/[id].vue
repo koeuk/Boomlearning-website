@@ -165,7 +165,7 @@ const route = useRoute()
 const { apiFetch } = useApi()
 const auth = useAuthStore()
 
-const courseId = Number(route.params.id)
+const courseId = route.params.id as string
 
 const { data: courseData, error } = await useAsyncData(
   `course-${courseId}`,

@@ -36,7 +36,7 @@ const props = defineProps<{
   category: Category
 }>()
 
-const image = computed(() => resolveImageUrl(props.category.image))
+const image = computed(() => resolveImageUrl(props.category.image_url))
 
 // Map category names to gradient backgrounds and icons for visual variety
 const gradients = [
@@ -52,6 +52,16 @@ const gradients = [
 
 const categoryIcons = [Code, Smartphone, Database, Shield, Cloud, Palette, BarChart3, Cpu]
 
-const gradient = computed(() => gradients[props.category.id % gradients.length])
-const CategoryIcon = computed(() => categoryIcons[props.category.id % categoryIcons.length])
+// Use hash of category name for consistent index since id is now a UUID string
+function hashIndex(str: string, len: number): number {
+  let hash = 0
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i)
+    hash |= 0
+  }
+  return Math.abs(hash) % len
+}
+
+const gradient = computed(() => gradients[hashIndex(props.category.id, gradients.length)])
+const CategoryIcon = computed(() => categoryIcons[hashIndex(props.category.id, categoryIcons.length)])
 </script>

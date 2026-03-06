@@ -2,12 +2,12 @@
   <div class="border border-gray-200 rounded-lg p-4">
     <div class="flex items-start gap-3">
       <Avatar class="w-10 h-10 shrink-0">
-        <AvatarImage v-if="avatar" :src="avatar" :alt="review.student.full_name" />
+        <AvatarImage v-if="avatar" :src="avatar" :alt="review.user.full_name" />
         <AvatarFallback>{{ initials }}</AvatarFallback>
       </Avatar>
       <div class="flex-1 min-w-0">
         <div class="flex items-center justify-between gap-2">
-          <p class="font-medium text-sm text-gray-900">{{ review.student.full_name }}</p>
+          <p class="font-medium text-sm text-gray-900">{{ review.user.full_name }}</p>
           <span class="text-xs text-gray-400 shrink-0">{{ formatRelativeTime(review.created_at) }}</span>
         </div>
         <div class="flex items-center gap-2 mt-1">
@@ -33,9 +33,9 @@ const props = defineProps<{
   review: Review
 }>()
 
-const avatar = computed(() => resolveImageUrl(props.review.student.profile_picture))
+const avatar = computed(() => resolveImageUrl(props.review.user.profile_picture))
 const initials = computed(() => {
-  const parts = props.review.student.full_name.split(' ')
+  const parts = props.review.user.full_name.split(' ')
   return parts.map(p => p[0]).join('').toUpperCase().slice(0, 2)
 })
 </script>

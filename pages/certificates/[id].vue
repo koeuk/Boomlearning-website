@@ -26,13 +26,8 @@
 
         <div>
           <p class="text-sm text-gray-500 mb-1">has successfully completed</p>
-          <h3 class="text-xl font-semibold text-primary-700">{{ certificate.course_name }}</h3>
-          <p class="text-sm text-gray-500 mt-1">{{ certificate.course_code }}</p>
-        </div>
-
-        <div>
-          <p class="text-sm text-gray-500 mb-1">Instructor</p>
-          <p class="font-medium text-gray-900">{{ certificate.instructor_name }}</p>
+          <h3 class="text-xl font-semibold text-primary-700">{{ certificate.course.course_name }}</h3>
+          <p class="text-sm text-gray-500 mt-1">{{ certificate.course.course_code }}</p>
         </div>
 
         <div class="flex justify-center gap-8 text-sm text-gray-500">
@@ -86,7 +81,7 @@ const { data, status } = await useAsyncData(`certificate-${route.params.id}`, ()
 const certificate = computed(() => data.value?.data ?? null)
 
 useHead({
-  title: computed(() => certificate.value ? `Certificate - ${certificate.value.course_name}` : 'Certificate'),
+  title: computed(() => certificate.value ? `Certificate - ${certificate.value.course.course_name}` : 'Certificate'),
 })
 
 const downloadUrl = computed(() =>

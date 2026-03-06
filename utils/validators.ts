@@ -6,12 +6,24 @@ export function isMinLength(value: string, min: number): boolean {
   return value.length >= min
 }
 
-export function isRequired(value: string): boolean {
-  return value.trim().length > 0
+export function isMaxLength(value: string, max: number): boolean {
+  return value.length <= max
+}
+
+export function isRequired(value: string | null | undefined): boolean {
+  return value !== null && value !== undefined && value.trim().length > 0
+}
+
+export function isPasswordStrong(password: string): boolean {
+  return password.length >= 8
 }
 
 export function passwordsMatch(password: string, confirmation: string): boolean {
   return password === confirmation
+}
+
+export function isValidPhone(phone: string): boolean {
+  return /^[+]?[\d\s()-]{7,15}$/.test(phone)
 }
 
 export function parseApiErrors(error: any): Record<string, string> {

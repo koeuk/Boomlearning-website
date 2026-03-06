@@ -1,10 +1,16 @@
 export interface Certificate {
-  id: number
+  id: string
   certificate_code: string
   issue_date: string
   student_name: string
-  course_name: string
-  course_code: string
   instructor_name: string
-  certificate_url: string | null
+  verification_url: string
+  download_url: string
+  course: {
+    id: string
+    course_name: string
+    course_code: string
+    category: string | null
+    thumbnail: string | null
+  }
 }

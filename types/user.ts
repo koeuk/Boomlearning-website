@@ -1,5 +1,5 @@
 export interface User {
-  id: number
+  id: string
   username: string
   email: string
   full_name: string
@@ -11,7 +11,7 @@ export interface User {
   user_type: string
   status: string
   created_at: string
-  updated_at?: string
+  updated_at: string
 }
 
 export interface LoginRequest {

@@ -70,7 +70,7 @@ definePageMeta({
 
 const route = useRoute()
 const { apiFetch } = useApi()
-const lessonId = Number(route.params.id)
+const lessonId = route.params.id as string
 
 const { data: lessonData, error } = await useAsyncData(
   `lesson-${lessonId}`,
