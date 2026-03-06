@@ -1,49 +1,3 @@
-<script setup lang="ts">
-import { Eye, EyeOff, LogIn, Loader2 } from 'lucide-vue-next'
-
-definePageMeta({
-  layout: 'auth',
-  middleware: 'guest',
-})
-
-useHead({ title: 'Login - BoomLearning' })
-
-const auth = useAuthStore()
-const route = useRoute()
-
-const form = reactive({
-  login: '',
-  password: '',
-})
-const showPassword = ref(false)
-const loading = ref(false)
-const errors = ref<Record<string, string>>({})
-
-async function handleLogin() {
-  errors.value = {}
-
-  if (!form.login.trim()) {
-    errors.value.login = 'Email or username is required'
-    return
-  }
-  if (!form.password) {
-    errors.value.password = 'Password is required'
-    return
-  }
-
-  loading.value = true
-  try {
-    await auth.login({ login: form.login, password: form.password })
-    const redirect = route.query.redirect as string | undefined
-    navigateTo(redirect || '/')
-  } catch (error: any) {
-    errors.value = parseApiErrors(error)
-  } finally {
-    loading.value = false
-  }
-}
-</script>
-
 <template>
   <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
     <h1 class="text-2xl font-bold text-gray-900 text-center mb-2">Welcome Back</h1>
@@ -120,3 +74,49 @@ async function handleLogin() {
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Eye, EyeOff, LogIn, Loader2 } from 'lucide-vue-next'
+
+definePageMeta({
+  layout: 'auth',
+  middleware: 'guest',
+})
+
+useHead({ title: 'Login - BoomLearning' })
+
+const auth = useAuthStore()
+const route = useRoute()
+
+const form = reactive({
+  login: '',
+  password: '',
+})
+const showPassword = ref(false)
+const loading = ref(false)
+const errors = ref<Record<string, string>>({})
+
+async function handleLogin() {
+  errors.value = {}
+
+  if (!form.login.trim()) {
+    errors.value.login = 'Email or username is required'
+    return
+  }
+  if (!form.password) {
+    errors.value.password = 'Password is required'
+    return
+  }
+
+  loading.value = true
+  try {
+    await auth.login({ login: form.login, password: form.password })
+    const redirect = route.query.redirect as string | undefined
+    navigateTo(redirect || '/')
+  } catch (error: any) {
+    errors.value = parseApiErrors(error)
+  } finally {
+    loading.value = false
+  }
+}
+</script>

@@ -1,63 +1,3 @@
-<script setup lang="ts">
-import { Menu, X, Bell, User, LogOut, BookOpen, Search, ChevronDown } from 'lucide-vue-next'
-
-const auth = useAuthStore()
-const notifications = useNotificationStore()
-const route = useRoute()
-
-const mobileMenuOpen = ref(false)
-const profileMenuOpen = ref(false)
-const searchQuery = ref('')
-
-const navLinks = [
-  { label: 'Home', to: '/' },
-  { label: 'Courses', to: '/courses' },
-  { label: 'Categories', to: '/categories' },
-]
-
-const authLinks = [
-  { label: 'My Learning', to: '/enrollments', icon: BookOpen },
-  { label: 'Profile', to: '/profile', icon: User },
-]
-
-function handleSearch() {
-  if (searchQuery.value.trim()) {
-    navigateTo(`/search?q=${encodeURIComponent(searchQuery.value.trim())}`)
-    searchQuery.value = ''
-  }
-}
-
-function handleLogout() {
-  profileMenuOpen.value = false
-  auth.logout()
-}
-
-// Close profile menu on route change
-watch(() => route.fullPath, () => {
-  profileMenuOpen.value = false
-  mobileMenuOpen.value = false
-})
-
-// Close menu when clicking outside
-function closeProfileMenu(e: Event) {
-  const target = e.target as HTMLElement
-  if (!target.closest('.profile-menu-container')) {
-    profileMenuOpen.value = false
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('click', closeProfileMenu)
-  if (auth.isAuthenticated) {
-    notifications.fetch().catch(() => {})
-  }
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', closeProfileMenu)
-})
-</script>
-
 <template>
   <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -248,3 +188,63 @@ onUnmounted(() => {
     </Transition>
   </nav>
 </template>
+
+<script setup lang="ts">
+import { Menu, X, Bell, User, LogOut, BookOpen, Search, ChevronDown } from 'lucide-vue-next'
+
+const auth = useAuthStore()
+const notifications = useNotificationStore()
+const route = useRoute()
+
+const mobileMenuOpen = ref(false)
+const profileMenuOpen = ref(false)
+const searchQuery = ref('')
+
+const navLinks = [
+  { label: 'Home', to: '/' },
+  { label: 'Courses', to: '/courses' },
+  { label: 'Categories', to: '/categories' },
+]
+
+const authLinks = [
+  { label: 'My Learning', to: '/enrollments', icon: BookOpen },
+  { label: 'Profile', to: '/profile', icon: User },
+]
+
+function handleSearch() {
+  if (searchQuery.value.trim()) {
+    navigateTo(`/search?q=${encodeURIComponent(searchQuery.value.trim())}`)
+    searchQuery.value = ''
+  }
+}
+
+function handleLogout() {
+  profileMenuOpen.value = false
+  auth.logout()
+}
+
+// Close profile menu on route change
+watch(() => route.fullPath, () => {
+  profileMenuOpen.value = false
+  mobileMenuOpen.value = false
+})
+
+// Close menu when clicking outside
+function closeProfileMenu(e: Event) {
+  const target = e.target as HTMLElement
+  if (!target.closest('.profile-menu-container')) {
+    profileMenuOpen.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', closeProfileMenu)
+  if (auth.isAuthenticated) {
+    notifications.fetch().catch(() => {})
+  }
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', closeProfileMenu)
+})
+</script>

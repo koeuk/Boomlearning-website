@@ -1,12 +1,3 @@
-<script setup lang="ts">
-import { Award } from 'lucide-vue-next'
-import type { Certificate } from '~/types/certificate'
-
-defineProps<{
-  certificate: Certificate
-}>()
-</script>
-
 <template>
   <div class="bg-white border-2 border-primary-200 rounded-xl p-8 md:p-12 text-center relative overflow-hidden">
     <!-- Decorative corners -->
@@ -42,3 +33,12 @@ defineProps<{
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Award } from 'lucide-vue-next'
+import type { Certificate } from '~/types/certificate'
+
+defineProps<{
+  certificate: Certificate
+}>()
+</script>

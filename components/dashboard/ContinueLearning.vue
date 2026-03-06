@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import { PlayCircle, ArrowRight, Play } from 'lucide-vue-next'
-import type { Enrollment } from '~/types/enrollment'
-
-defineProps<{
-  enrollments: Enrollment[]
-  loading?: boolean
-}>()
-
-function progressColor(pct: number) {
-  if (pct >= 75) return 'bg-emerald-500'
-  if (pct >= 40) return 'bg-primary-500'
-  return 'bg-amber-500'
-}
-</script>
-
 <template>
   <div>
     <div class="flex items-center justify-between mb-5">
@@ -96,3 +80,19 @@ function progressColor(pct: number) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { PlayCircle, ArrowRight, Play } from 'lucide-vue-next'
+import type { Enrollment } from '~/types/enrollment'
+
+defineProps<{
+  enrollments: Enrollment[]
+  loading?: boolean
+}>()
+
+function progressColor(pct: number) {
+  if (pct >= 75) return 'bg-emerald-500'
+  if (pct >= 40) return 'bg-primary-500'
+  return 'bg-amber-500'
+}
+</script>

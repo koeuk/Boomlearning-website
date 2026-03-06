@@ -1,3 +1,9 @@
+<template>
+  <AvatarRoot :class="cn(avatarVariant({ size, shape }), props.class)">
+    <slot />
+  </AvatarRoot>
+</template>
+
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue"
 import type { AvatarVariants } from "."
@@ -14,9 +20,3 @@ const props = withDefaults(defineProps<{
   shape: "circle",
 })
 </script>
-
-<template>
-  <AvatarRoot :class="cn(avatarVariant({ size, shape }), props.class)">
-    <slot />
-  </AvatarRoot>
-</template>

@@ -1,71 +1,3 @@
-<script setup lang="ts">
-import { ChevronLeft, ChevronRight, Clock, AlertCircle } from 'lucide-vue-next'
-import type { Quiz, Question } from '~/types/quiz'
-
-const props = defineProps<{
-  quiz: Quiz
-}>()
-
-const emit = defineEmits<{
-  submit: [answers: Record<number, number | string>]
-}>()
-
-const answers = ref<Record<number, number | string>>({})
-const currentIndex = ref(0)
-
-const currentQuestion = computed(() => props.quiz.questions[currentIndex.value])
-const totalQuestions = computed(() => props.quiz.questions.length)
-const answeredCount = computed(() => Object.keys(answers.value).length)
-const allAnswered = computed(() => answeredCount.value === totalQuestions.value)
-
-function selectOption(questionId: number, optionId: number) {
-  answers.value[questionId] = optionId
-}
-
-function setTextAnswer(questionId: number, text: string) {
-  answers.value[questionId] = text
-}
-
-function prev() {
-  if (currentIndex.value > 0) currentIndex.value--
-}
-
-function next() {
-  if (currentIndex.value < totalQuestions.value - 1) currentIndex.value++
-}
-
-function handleSubmit() {
-  emit('submit', { ...answers.value })
-}
-
-// Timer
-const timeRemaining = ref(props.quiz.time_limit_minutes ? props.quiz.time_limit_minutes * 60 : 0)
-const hasTimer = computed(() => !!props.quiz.time_limit_minutes)
-let timer: ReturnType<typeof setInterval> | null = null
-
-const formattedTime = computed(() => {
-  const m = Math.floor(timeRemaining.value / 60)
-  const s = timeRemaining.value % 60
-  return `${m}:${s.toString().padStart(2, '0')}`
-})
-
-onMounted(() => {
-  if (hasTimer.value) {
-    timer = setInterval(() => {
-      timeRemaining.value--
-      if (timeRemaining.value <= 0) {
-        if (timer) clearInterval(timer)
-        handleSubmit()
-      }
-    }, 1000)
-  }
-})
-
-onUnmounted(() => {
-  if (timer) clearInterval(timer)
-})
-</script>
-
 <template>
   <div class="space-y-6">
     <!-- Header -->
@@ -161,3 +93,71 @@ onUnmounted(() => {
     </Alert>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ChevronLeft, ChevronRight, Clock, AlertCircle } from 'lucide-vue-next'
+import type { Quiz, Question } from '~/types/quiz'
+
+const props = defineProps<{
+  quiz: Quiz
+}>()
+
+const emit = defineEmits<{
+  submit: [answers: Record<number, number | string>]
+}>()
+
+const answers = ref<Record<number, number | string>>({})
+const currentIndex = ref(0)
+
+const currentQuestion = computed(() => props.quiz.questions[currentIndex.value])
+const totalQuestions = computed(() => props.quiz.questions.length)
+const answeredCount = computed(() => Object.keys(answers.value).length)
+const allAnswered = computed(() => answeredCount.value === totalQuestions.value)
+
+function selectOption(questionId: number, optionId: number) {
+  answers.value[questionId] = optionId
+}
+
+function setTextAnswer(questionId: number, text: string) {
+  answers.value[questionId] = text
+}
+
+function prev() {
+  if (currentIndex.value > 0) currentIndex.value--
+}
+
+function next() {
+  if (currentIndex.value < totalQuestions.value - 1) currentIndex.value++
+}
+
+function handleSubmit() {
+  emit('submit', { ...answers.value })
+}
+
+// Timer
+const timeRemaining = ref(props.quiz.time_limit_minutes ? props.quiz.time_limit_minutes * 60 : 0)
+const hasTimer = computed(() => !!props.quiz.time_limit_minutes)
+let timer: ReturnType<typeof setInterval> | null = null
+
+const formattedTime = computed(() => {
+  const m = Math.floor(timeRemaining.value / 60)
+  const s = timeRemaining.value % 60
+  return `${m}:${s.toString().padStart(2, '0')}`
+})
+
+onMounted(() => {
+  if (hasTimer.value) {
+    timer = setInterval(() => {
+      timeRemaining.value--
+      if (timeRemaining.value <= 0) {
+        if (timer) clearInterval(timer)
+        handleSubmit()
+      }
+    }, 1000)
+  }
+})
+
+onUnmounted(() => {
+  if (timer) clearInterval(timer)
+})
+</script>

@@ -1,39 +1,3 @@
-<script setup lang="ts">
-import { BookOpen, CheckCircle, Award, PlayCircle, Activity, Zap } from 'lucide-vue-next'
-
-interface ActivityItem {
-  id: number
-  type: string
-  description: string
-  created_at: string
-}
-
-defineProps<{
-  activities: ActivityItem[]
-  loading?: boolean
-}>()
-
-function getIcon(type: string) {
-  switch (type) {
-    case 'enrollment': return BookOpen
-    case 'completion': return CheckCircle
-    case 'certificate': return Award
-    case 'lesson': return PlayCircle
-    default: return Activity
-  }
-}
-
-function getColor(type: string) {
-  switch (type) {
-    case 'enrollment': return 'text-blue-600 bg-blue-100'
-    case 'completion': return 'text-emerald-600 bg-emerald-100'
-    case 'certificate': return 'text-violet-600 bg-violet-100'
-    case 'lesson': return 'text-amber-600 bg-amber-100'
-    default: return 'text-gray-600 bg-gray-100'
-  }
-}
-</script>
-
 <template>
   <div>
     <h2 class="text-lg font-bold text-gray-900 mb-5">Recent Activity</h2>
@@ -76,3 +40,39 @@ function getColor(type: string) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { BookOpen, CheckCircle, Award, PlayCircle, Activity, Zap } from 'lucide-vue-next'
+
+interface ActivityItem {
+  id: number
+  type: string
+  description: string
+  created_at: string
+}
+
+defineProps<{
+  activities: ActivityItem[]
+  loading?: boolean
+}>()
+
+function getIcon(type: string) {
+  switch (type) {
+    case 'enrollment': return BookOpen
+    case 'completion': return CheckCircle
+    case 'certificate': return Award
+    case 'lesson': return PlayCircle
+    default: return Activity
+  }
+}
+
+function getColor(type: string) {
+  switch (type) {
+    case 'enrollment': return 'text-blue-600 bg-blue-100'
+    case 'completion': return 'text-emerald-600 bg-emerald-100'
+    case 'certificate': return 'text-violet-600 bg-violet-100'
+    case 'lesson': return 'text-amber-600 bg-amber-100'
+    default: return 'text-gray-600 bg-gray-100'
+  }
+}
+</script>

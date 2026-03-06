@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import { User, Mail, Phone, Calendar, MapPin, Edit, Key } from 'lucide-vue-next'
-
-definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Profile - BoomLearning' })
-
-const auth = useAuthStore()
-const user = computed(() => auth.user)
-</script>
-
 <template>
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex items-center justify-between mb-6">
@@ -101,3 +91,13 @@ const user = computed(() => auth.user)
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { User, Mail, Phone, Calendar, MapPin, Edit, Key } from 'lucide-vue-next'
+
+definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Profile - BoomLearning' })
+
+const auth = useAuthStore()
+const user = computed(() => auth.user)
+</script>

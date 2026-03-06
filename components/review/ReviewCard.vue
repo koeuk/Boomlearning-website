@@ -1,18 +1,3 @@
-<script setup lang="ts">
-import { ThumbsUp } from 'lucide-vue-next'
-import type { Review } from '~/types/review'
-
-const props = defineProps<{
-  review: Review
-}>()
-
-const avatar = computed(() => resolveImageUrl(props.review.student.profile_picture))
-const initials = computed(() => {
-  const parts = props.review.student.full_name.split(' ')
-  return parts.map(p => p[0]).join('').toUpperCase().slice(0, 2)
-})
-</script>
-
 <template>
   <div class="border border-gray-200 rounded-lg p-4">
     <div class="flex items-start gap-3">
@@ -39,3 +24,18 @@ const initials = computed(() => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ThumbsUp } from 'lucide-vue-next'
+import type { Review } from '~/types/review'
+
+const props = defineProps<{
+  review: Review
+}>()
+
+const avatar = computed(() => resolveImageUrl(props.review.student.profile_picture))
+const initials = computed(() => {
+  const parts = props.review.student.full_name.split(' ')
+  return parts.map(p => p[0]).join('').toUpperCase().slice(0, 2)
+})
+</script>

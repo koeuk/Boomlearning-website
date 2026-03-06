@@ -1,26 +1,3 @@
-<script setup lang="ts">
-import { Activity, Loader2, Clock } from 'lucide-vue-next'
-import type { ApiResponse } from '~/types/api'
-
-definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Activity Log - BoomLearning' })
-
-const { apiFetch } = useApi()
-
-interface ActivityItem {
-  id: number
-  type: string
-  description: string
-  properties?: Record<string, any>
-  created_at: string
-}
-
-const { data, status } = await useAsyncData('activity-log', () =>
-  apiFetch<ApiResponse<ActivityItem[]>>('/dashboard/activity-log')
-)
-const activities = computed(() => data.value?.data ?? [])
-</script>
-
 <template>
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-2xl font-bold text-gray-900 mb-6">Activity Log</h1>
@@ -52,3 +29,26 @@ const activities = computed(() => data.value?.data ?? [])
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Activity, Loader2, Clock } from 'lucide-vue-next'
+import type { ApiResponse } from '~/types/api'
+
+definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Activity Log - BoomLearning' })
+
+const { apiFetch } = useApi()
+
+interface ActivityItem {
+  id: number
+  type: string
+  description: string
+  properties?: Record<string, any>
+  created_at: string
+}
+
+const { data, status } = await useAsyncData('activity-log', () =>
+  apiFetch<ApiResponse<ActivityItem[]>>('/dashboard/activity-log')
+)
+const activities = computed(() => data.value?.data ?? [])
+</script>

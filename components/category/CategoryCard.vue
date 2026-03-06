@@ -1,31 +1,3 @@
-<script setup lang="ts">
-import { Code, Smartphone, Database, Shield, Cloud, Palette, BarChart3, Cpu, Globe, FolderOpen } from 'lucide-vue-next'
-import type { Category } from '~/types/category'
-
-const props = defineProps<{
-  category: Category
-}>()
-
-const image = computed(() => resolveImageUrl(props.category.image))
-
-// Map category names to gradient backgrounds and icons for visual variety
-const gradients = [
-  'from-blue-500 to-blue-600',
-  'from-emerald-500 to-emerald-600',
-  'from-violet-500 to-violet-600',
-  'from-amber-500 to-amber-600',
-  'from-rose-500 to-rose-600',
-  'from-cyan-500 to-cyan-600',
-  'from-indigo-500 to-indigo-600',
-  'from-pink-500 to-pink-600',
-]
-
-const categoryIcons = [Code, Smartphone, Database, Shield, Cloud, Palette, BarChart3, Cpu]
-
-const gradient = computed(() => gradients[props.category.id % gradients.length])
-const CategoryIcon = computed(() => categoryIcons[props.category.id % categoryIcons.length])
-</script>
-
 <template>
   <NuxtLink :to="`/categories/${category.id}`" class="group block">
     <div class="relative bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
@@ -55,3 +27,31 @@ const CategoryIcon = computed(() => categoryIcons[props.category.id % categoryIc
     </div>
   </NuxtLink>
 </template>
+
+<script setup lang="ts">
+import { Code, Smartphone, Database, Shield, Cloud, Palette, BarChart3, Cpu, Globe, FolderOpen } from 'lucide-vue-next'
+import type { Category } from '~/types/category'
+
+const props = defineProps<{
+  category: Category
+}>()
+
+const image = computed(() => resolveImageUrl(props.category.image))
+
+// Map category names to gradient backgrounds and icons for visual variety
+const gradients = [
+  'from-blue-500 to-blue-600',
+  'from-emerald-500 to-emerald-600',
+  'from-violet-500 to-violet-600',
+  'from-amber-500 to-amber-600',
+  'from-rose-500 to-rose-600',
+  'from-cyan-500 to-cyan-600',
+  'from-indigo-500 to-indigo-600',
+  'from-pink-500 to-pink-600',
+]
+
+const categoryIcons = [Code, Smartphone, Database, Shield, Cloud, Palette, BarChart3, Cpu]
+
+const gradient = computed(() => gradients[props.category.id % gradients.length])
+const CategoryIcon = computed(() => categoryIcons[props.category.id % categoryIcons.length])
+</script>

@@ -1,14 +1,3 @@
-<script setup lang="ts">
-import { BookOpen } from 'lucide-vue-next'
-import type { Course } from '~/types/course'
-
-defineProps<{
-  courses: Course[]
-  loading?: boolean
-  emptyMessage?: string
-}>()
-</script>
-
 <template>
   <div>
     <!-- Skeleton Loading -->
@@ -44,3 +33,14 @@ defineProps<{
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { BookOpen } from 'lucide-vue-next'
+import type { Course } from '~/types/course'
+
+defineProps<{
+  courses: Course[]
+  loading?: boolean
+  emptyMessage?: string
+}>()
+</script>

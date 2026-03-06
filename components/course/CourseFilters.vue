@@ -1,42 +1,3 @@
-<script setup lang="ts">
-import { Search, SlidersHorizontal, X } from 'lucide-vue-next'
-import type { Category } from '~/types/category'
-
-const props = defineProps<{
-  categories: Category[]
-}>()
-
-const search = defineModel<string>('search', { default: '' })
-const level = defineModel<string>('level', { default: '' })
-const categoryId = defineModel<string>('categoryId', { default: '' })
-const sort = defineModel<string>('sort', { default: '' })
-
-const sheetOpen = ref(false)
-
-const levels = [
-  { value: '', label: 'All Levels' },
-  { value: 'beginner', label: 'Beginner' },
-  { value: 'intermediate', label: 'Intermediate' },
-  { value: 'advanced', label: 'Advanced' },
-]
-
-const sortOptions = [
-  { value: '', label: 'Default' },
-  { value: 'newest', label: 'Newest' },
-  { value: 'price_asc', label: 'Price: Low to High' },
-  { value: 'price_desc', label: 'Price: High to Low' },
-  { value: 'rating', label: 'Highest Rated' },
-]
-
-const hasFilters = computed(() => level.value || categoryId.value || sort.value)
-
-function clearFilters() {
-  level.value = ''
-  categoryId.value = ''
-  sort.value = ''
-}
-</script>
-
 <template>
   <div class="space-y-4">
     <!-- Search Bar -->
@@ -137,3 +98,42 @@ function clearFilters() {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Search, SlidersHorizontal, X } from 'lucide-vue-next'
+import type { Category } from '~/types/category'
+
+const props = defineProps<{
+  categories: Category[]
+}>()
+
+const search = defineModel<string>('search', { default: '' })
+const level = defineModel<string>('level', { default: '' })
+const categoryId = defineModel<string>('categoryId', { default: '' })
+const sort = defineModel<string>('sort', { default: '' })
+
+const sheetOpen = ref(false)
+
+const levels = [
+  { value: '', label: 'All Levels' },
+  { value: 'beginner', label: 'Beginner' },
+  { value: 'intermediate', label: 'Intermediate' },
+  { value: 'advanced', label: 'Advanced' },
+]
+
+const sortOptions = [
+  { value: '', label: 'Default' },
+  { value: 'newest', label: 'Newest' },
+  { value: 'price_asc', label: 'Price: Low to High' },
+  { value: 'price_desc', label: 'Price: High to Low' },
+  { value: 'rating', label: 'Highest Rated' },
+]
+
+const hasFilters = computed(() => level.value || categoryId.value || sort.value)
+
+function clearFilters() {
+  level.value = ''
+  categoryId.value = ''
+  sort.value = ''
+}
+</script>

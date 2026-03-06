@@ -1,19 +1,3 @@
-<script setup lang="ts">
-import { Award, Download, Eye, Loader2 } from 'lucide-vue-next'
-import type { Certificate } from '~/types/certificate'
-import type { ApiResponse } from '~/types/api'
-
-definePageMeta({ middleware: 'auth' })
-useHead({ title: 'My Certificates - BoomLearning' })
-
-const { apiFetch } = useApi()
-
-const { data, status } = await useAsyncData('my-certificates', () =>
-  apiFetch<ApiResponse<Certificate[]>>('/certificates')
-)
-const certificates = computed(() => data.value?.data ?? [])
-</script>
-
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-2xl font-bold text-gray-900 mb-6">My Certificates</h1>
@@ -69,3 +53,19 @@ const certificates = computed(() => data.value?.data ?? [])
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Award, Download, Eye, Loader2 } from 'lucide-vue-next'
+import type { Certificate } from '~/types/certificate'
+import type { ApiResponse } from '~/types/api'
+
+definePageMeta({ middleware: 'auth' })
+useHead({ title: 'My Certificates - BoomLearning' })
+
+const { apiFetch } = useApi()
+
+const { data, status } = await useAsyncData('my-certificates', () =>
+  apiFetch<ApiResponse<Certificate[]>>('/certificates')
+)
+const certificates = computed(() => data.value?.data ?? [])
+</script>

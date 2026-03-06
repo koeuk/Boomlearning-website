@@ -1,3 +1,21 @@
+<template>
+  <div class="flex items-center gap-1">
+    <template v-for="i in max" :key="i">
+      <Star
+        :class="[
+          sizeClass,
+          i <= Math.round(rating)
+            ? 'text-yellow-400 fill-yellow-400'
+            : 'text-gray-300'
+        ]"
+      />
+    </template>
+    <span v-if="showValue" :class="['font-medium text-gray-700 ml-0.5', textClass]">
+      {{ rating.toFixed(1) }}
+    </span>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { Star } from 'lucide-vue-next'
 
@@ -24,21 +42,3 @@ const textClass = computed(() => ({
   lg: 'text-base',
 }[props.size]))
 </script>
-
-<template>
-  <div class="flex items-center gap-1">
-    <template v-for="i in max" :key="i">
-      <Star
-        :class="[
-          sizeClass,
-          i <= Math.round(rating)
-            ? 'text-yellow-400 fill-yellow-400'
-            : 'text-gray-300'
-        ]"
-      />
-    </template>
-    <span v-if="showValue" :class="['font-medium text-gray-700 ml-0.5', textClass]">
-      {{ rating.toFixed(1) }}
-    </span>
-  </div>
-</template>

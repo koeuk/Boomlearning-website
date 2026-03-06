@@ -1,66 +1,3 @@
-<script setup lang="ts">
-import { Eye, EyeOff, UserPlus, Loader2 } from 'lucide-vue-next'
-
-definePageMeta({
-  layout: 'auth',
-  middleware: 'guest',
-})
-
-useHead({ title: 'Register - BoomLearning' })
-
-const auth = useAuthStore()
-
-const form = reactive({
-  full_name: '',
-  username: '',
-  email: '',
-  password: '',
-  password_confirmation: '',
-  phone: '',
-  date_of_birth: '',
-  gender: '',
-})
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
-const loading = ref(false)
-const errors = ref<Record<string, string>>({})
-
-async function handleRegister() {
-  errors.value = {}
-
-  // Client-side validation
-  if (!form.full_name.trim()) errors.value.full_name = 'Full name is required'
-  if (!form.username.trim()) errors.value.username = 'Username is required'
-  if (!form.email.trim()) errors.value.email = 'Email is required'
-  else if (!isValidEmail(form.email)) errors.value.email = 'Invalid email address'
-  if (!form.password) errors.value.password = 'Password is required'
-  else if (!isMinLength(form.password, 8)) errors.value.password = 'Password must be at least 8 characters'
-  if (form.password !== form.password_confirmation) errors.value.password_confirmation = 'Passwords do not match'
-
-  if (Object.keys(errors.value).length > 0) return
-
-  loading.value = true
-  try {
-    const formData = new FormData()
-    formData.append('full_name', form.full_name)
-    formData.append('username', form.username)
-    formData.append('email', form.email)
-    formData.append('password', form.password)
-    formData.append('password_confirmation', form.password_confirmation)
-    if (form.phone) formData.append('phone', form.phone)
-    if (form.date_of_birth) formData.append('date_of_birth', form.date_of_birth)
-    if (form.gender) formData.append('gender', form.gender)
-
-    await auth.register(formData)
-    navigateTo('/')
-  } catch (error: any) {
-    errors.value = parseApiErrors(error)
-  } finally {
-    loading.value = false
-  }
-}
-</script>
-
 <template>
   <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
     <h1 class="text-2xl font-bold text-gray-900 text-center mb-2">Create Account</h1>
@@ -223,3 +160,66 @@ async function handleRegister() {
     </p>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Eye, EyeOff, UserPlus, Loader2 } from 'lucide-vue-next'
+
+definePageMeta({
+  layout: 'auth',
+  middleware: 'guest',
+})
+
+useHead({ title: 'Register - BoomLearning' })
+
+const auth = useAuthStore()
+
+const form = reactive({
+  full_name: '',
+  username: '',
+  email: '',
+  password: '',
+  password_confirmation: '',
+  phone: '',
+  date_of_birth: '',
+  gender: '',
+})
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
+const loading = ref(false)
+const errors = ref<Record<string, string>>({})
+
+async function handleRegister() {
+  errors.value = {}
+
+  // Client-side validation
+  if (!form.full_name.trim()) errors.value.full_name = 'Full name is required'
+  if (!form.username.trim()) errors.value.username = 'Username is required'
+  if (!form.email.trim()) errors.value.email = 'Email is required'
+  else if (!isValidEmail(form.email)) errors.value.email = 'Invalid email address'
+  if (!form.password) errors.value.password = 'Password is required'
+  else if (!isMinLength(form.password, 8)) errors.value.password = 'Password must be at least 8 characters'
+  if (form.password !== form.password_confirmation) errors.value.password_confirmation = 'Passwords do not match'
+
+  if (Object.keys(errors.value).length > 0) return
+
+  loading.value = true
+  try {
+    const formData = new FormData()
+    formData.append('full_name', form.full_name)
+    formData.append('username', form.username)
+    formData.append('email', form.email)
+    formData.append('password', form.password)
+    formData.append('password_confirmation', form.password_confirmation)
+    if (form.phone) formData.append('phone', form.phone)
+    if (form.date_of_birth) formData.append('date_of_birth', form.date_of_birth)
+    if (form.gender) formData.append('gender', form.gender)
+
+    await auth.register(formData)
+    navigateTo('/')
+  } catch (error: any) {
+    errors.value = parseApiErrors(error)
+  } finally {
+    loading.value = false
+  }
+}
+</script>

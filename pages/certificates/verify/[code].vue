@@ -1,58 +1,3 @@
-<script setup lang="ts">
-import { Search, CheckCircle, XCircle, Loader2 } from 'lucide-vue-next'
-import type { ApiResponse } from '~/types/api'
-import type { Certificate } from '~/types/certificate'
-
-useHead({ title: 'Verify Certificate - BoomLearning' })
-
-const route = useRoute()
-const { apiFetch } = useApi()
-
-const code = ref((route.params.code as string) || '')
-const inputCode = ref(code.value)
-const certificate = ref<Certificate | null>(null)
-const error = ref('')
-const loading = ref(false)
-const searched = ref(false)
-
-async function verify(certificateCode: string) {
-  if (!certificateCode.trim()) return
-
-  loading.value = true
-  error.value = ''
-  certificate.value = null
-  searched.value = true
-
-  try {
-    const res = await apiFetch<ApiResponse<Certificate>>(`/certificates/verify/${certificateCode.trim()}`)
-    certificate.value = res.data
-  } catch (e: any) {
-    if (e?.response?.status === 404) {
-      error.value = 'Certificate not found. Please check the code and try again.'
-    } else {
-      error.value = 'An error occurred while verifying the certificate.'
-    }
-  } finally {
-    loading.value = false
-  }
-}
-
-function handleSubmit() {
-  if (inputCode.value.trim()) {
-    code.value = inputCode.value.trim()
-    navigateTo(`/certificates/verify/${encodeURIComponent(code.value)}`, { replace: true })
-    verify(code.value)
-  }
-}
-
-// Auto-verify if code is in the URL
-onMounted(() => {
-  if (code.value) {
-    verify(code.value)
-  }
-})
-</script>
-
 <template>
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="text-center mb-8">
@@ -112,3 +57,58 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Search, CheckCircle, XCircle, Loader2 } from 'lucide-vue-next'
+import type { ApiResponse } from '~/types/api'
+import type { Certificate } from '~/types/certificate'
+
+useHead({ title: 'Verify Certificate - BoomLearning' })
+
+const route = useRoute()
+const { apiFetch } = useApi()
+
+const code = ref((route.params.code as string) || '')
+const inputCode = ref(code.value)
+const certificate = ref<Certificate | null>(null)
+const error = ref('')
+const loading = ref(false)
+const searched = ref(false)
+
+async function verify(certificateCode: string) {
+  if (!certificateCode.trim()) return
+
+  loading.value = true
+  error.value = ''
+  certificate.value = null
+  searched.value = true
+
+  try {
+    const res = await apiFetch<ApiResponse<Certificate>>(`/certificates/verify/${certificateCode.trim()}`)
+    certificate.value = res.data
+  } catch (e: any) {
+    if (e?.response?.status === 404) {
+      error.value = 'Certificate not found. Please check the code and try again.'
+    } else {
+      error.value = 'An error occurred while verifying the certificate.'
+    }
+  } finally {
+    loading.value = false
+  }
+}
+
+function handleSubmit() {
+  if (inputCode.value.trim()) {
+    code.value = inputCode.value.trim()
+    navigateTo(`/certificates/verify/${encodeURIComponent(code.value)}`, { replace: true })
+    verify(code.value)
+  }
+}
+
+// Auto-verify if code is in the URL
+onMounted(() => {
+  if (code.value) {
+    verify(code.value)
+  }
+})
+</script>

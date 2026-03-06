@@ -1,20 +1,3 @@
-<script setup lang="ts">
-import { Clock, Users, BookOpen } from 'lucide-vue-next'
-import type { Course } from '~/types/course'
-
-const props = defineProps<{
-  course: Course
-}>()
-
-const thumbnail = computed(() => resolveImageUrl(props.course.thumbnail))
-
-const levelConfig = computed(() => ({
-  beginner: { class: 'bg-emerald-500/90 text-white', label: 'Beginner' },
-  intermediate: { class: 'bg-blue-500/90 text-white', label: 'Intermediate' },
-  advanced: { class: 'bg-violet-500/90 text-white', label: 'Advanced' },
-}[props.course.level]))
-</script>
-
 <template>
   <NuxtLink :to="`/courses/${course.id}`" class="group block">
     <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full flex flex-col">
@@ -74,3 +57,20 @@ const levelConfig = computed(() => ({
     </div>
   </NuxtLink>
 </template>
+
+<script setup lang="ts">
+import { Clock, Users, BookOpen } from 'lucide-vue-next'
+import type { Course } from '~/types/course'
+
+const props = defineProps<{
+  course: Course
+}>()
+
+const thumbnail = computed(() => resolveImageUrl(props.course.thumbnail))
+
+const levelConfig = computed(() => ({
+  beginner: { class: 'bg-emerald-500/90 text-white', label: 'Beginner' },
+  intermediate: { class: 'bg-blue-500/90 text-white', label: 'Intermediate' },
+  advanced: { class: 'bg-violet-500/90 text-white', label: 'Advanced' },
+}[props.course.level]))
+</script>

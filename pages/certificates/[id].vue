@@ -1,35 +1,3 @@
-<script setup lang="ts">
-import { Award, Download, ArrowLeft, Share2, Loader2 } from 'lucide-vue-next'
-import type { Certificate } from '~/types/certificate'
-import type { ApiResponse } from '~/types/api'
-
-definePageMeta({ middleware: 'auth' })
-
-const route = useRoute()
-const { apiFetch } = useApi()
-const config = useRuntimeConfig()
-
-const { data, status } = await useAsyncData(`certificate-${route.params.id}`, () =>
-  apiFetch<ApiResponse<Certificate>>(`/certificates/${route.params.id}`)
-)
-const certificate = computed(() => data.value?.data ?? null)
-
-useHead({
-  title: computed(() => certificate.value ? `Certificate - ${certificate.value.course_name}` : 'Certificate'),
-})
-
-const downloadUrl = computed(() =>
-  `${config.public.apiBase}/certificates/${route.params.id}/download`
-)
-
-function shareCertificate() {
-  if (certificate.value) {
-    const url = `${window.location.origin}/certificates/verify/${certificate.value.certificate_code}`
-    navigator.clipboard.writeText(url)
-  }
-}
-</script>
-
 <template>
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <NuxtLink to="/certificates" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 mb-6">
@@ -100,3 +68,35 @@ function shareCertificate() {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Award, Download, ArrowLeft, Share2, Loader2 } from 'lucide-vue-next'
+import type { Certificate } from '~/types/certificate'
+import type { ApiResponse } from '~/types/api'
+
+definePageMeta({ middleware: 'auth' })
+
+const route = useRoute()
+const { apiFetch } = useApi()
+const config = useRuntimeConfig()
+
+const { data, status } = await useAsyncData(`certificate-${route.params.id}`, () =>
+  apiFetch<ApiResponse<Certificate>>(`/certificates/${route.params.id}`)
+)
+const certificate = computed(() => data.value?.data ?? null)
+
+useHead({
+  title: computed(() => certificate.value ? `Certificate - ${certificate.value.course_name}` : 'Certificate'),
+})
+
+const downloadUrl = computed(() =>
+  `${config.public.apiBase}/certificates/${route.params.id}/download`
+)
+
+function shareCertificate() {
+  if (certificate.value) {
+    const url = `${window.location.origin}/certificates/verify/${certificate.value.certificate_code}`
+    navigator.clipboard.writeText(url)
+  }
+}
+</script>

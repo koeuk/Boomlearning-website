@@ -1,80 +1,3 @@
-<script setup lang="ts">
-import {
-  ChevronRight, ChevronDown, PlayCircle, FileText, HelpCircle,
-  CheckCircle, Clock, Lock, ArrowLeft
-} from 'lucide-vue-next'
-import type { ApiResponse } from '~/types/api'
-import type { Enrollment } from '~/types/enrollment'
-import type { Module, Lesson } from '~/types/course'
-
-definePageMeta({
-  middleware: 'auth',
-})
-
-const route = useRoute()
-const { apiFetch } = useApi()
-const enrollmentId = Number(route.params.id)
-
-const { data: enrollData, error } = await useAsyncData(
-  `enrollment-${enrollmentId}`,
-  () => apiFetch<ApiResponse<Enrollment>>(`/enrollments/${enrollmentId}`)
-)
-
-const enrollment = computed(() => enrollData.value?.data)
-const course = computed(() => enrollment.value?.course)
-
-useHead({
-  title: computed(() => course.value ? `${course.value.course_name} - My Learning` : 'Enrollment - BoomLearning'),
-})
-
-if (error.value) {
-  throw createError({ statusCode: 404, message: 'Enrollment not found' })
-}
-
-// Module accordion
-const openModules = ref<Set<number>>(new Set())
-
-// Auto-open first module
-watch(course, (c) => {
-  if (c?.modules?.length) {
-    openModules.value.add(c.modules[0].id)
-  }
-}, { immediate: true })
-
-function toggleModule(id: number) {
-  if (openModules.value.has(id)) {
-    openModules.value.delete(id)
-  } else {
-    openModules.value.add(id)
-  }
-}
-
-const lessonIcon = {
-  video: PlayCircle,
-  text: FileText,
-  quiz: HelpCircle,
-} as const
-
-function lessonStatusIcon(lesson: Lesson) {
-  if (lesson.progress?.status === 'completed') return CheckCircle
-  if (lesson.progress?.status === 'in_progress') return Clock
-  return null
-}
-
-function lessonStatusColor(lesson: Lesson) {
-  if (lesson.progress?.status === 'completed') return 'text-green-500'
-  if (lesson.progress?.status === 'in_progress') return 'text-amber-500'
-  return 'text-gray-300'
-}
-
-function lessonUrl(lesson: Lesson) {
-  if (lesson.lesson_type === 'quiz' && lesson.quiz) {
-    return `/quizzes/${lesson.quiz.id}`
-  }
-  return `/lessons/${lesson.id}`
-}
-</script>
-
 <template>
   <div v-if="enrollment && course">
     <!-- Header -->
@@ -169,3 +92,80 @@ function lessonUrl(lesson: Lesson) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import {
+  ChevronRight, ChevronDown, PlayCircle, FileText, HelpCircle,
+  CheckCircle, Clock, Lock, ArrowLeft
+} from 'lucide-vue-next'
+import type { ApiResponse } from '~/types/api'
+import type { Enrollment } from '~/types/enrollment'
+import type { Module, Lesson } from '~/types/course'
+
+definePageMeta({
+  middleware: 'auth',
+})
+
+const route = useRoute()
+const { apiFetch } = useApi()
+const enrollmentId = Number(route.params.id)
+
+const { data: enrollData, error } = await useAsyncData(
+  `enrollment-${enrollmentId}`,
+  () => apiFetch<ApiResponse<Enrollment>>(`/enrollments/${enrollmentId}`)
+)
+
+const enrollment = computed(() => enrollData.value?.data)
+const course = computed(() => enrollment.value?.course)
+
+useHead({
+  title: computed(() => course.value ? `${course.value.course_name} - My Learning` : 'Enrollment - BoomLearning'),
+})
+
+if (error.value) {
+  throw createError({ statusCode: 404, message: 'Enrollment not found' })
+}
+
+// Module accordion
+const openModules = ref<Set<number>>(new Set())
+
+// Auto-open first module
+watch(course, (c) => {
+  if (c?.modules?.length) {
+    openModules.value.add(c.modules[0].id)
+  }
+}, { immediate: true })
+
+function toggleModule(id: number) {
+  if (openModules.value.has(id)) {
+    openModules.value.delete(id)
+  } else {
+    openModules.value.add(id)
+  }
+}
+
+const lessonIcon = {
+  video: PlayCircle,
+  text: FileText,
+  quiz: HelpCircle,
+} as const
+
+function lessonStatusIcon(lesson: Lesson) {
+  if (lesson.progress?.status === 'completed') return CheckCircle
+  if (lesson.progress?.status === 'in_progress') return Clock
+  return null
+}
+
+function lessonStatusColor(lesson: Lesson) {
+  if (lesson.progress?.status === 'completed') return 'text-green-500'
+  if (lesson.progress?.status === 'in_progress') return 'text-amber-500'
+  return 'text-gray-300'
+}
+
+function lessonUrl(lesson: Lesson) {
+  if (lesson.lesson_type === 'quiz' && lesson.quiz) {
+    return `/quizzes/${lesson.quiz.id}`
+  }
+  return `/lessons/${lesson.id}`
+}
+</script>

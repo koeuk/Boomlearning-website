@@ -1,57 +1,3 @@
-<script setup lang="ts">
-import {
-  Clock, Users, BarChart3, BookOpen, Award, Star,
-  ChevronRight, PlayCircle, CheckCircle
-} from 'lucide-vue-next'
-import type { ApiResponse } from '~/types/api'
-import type { Course } from '~/types/course'
-
-const route = useRoute()
-const { apiFetch } = useApi()
-const auth = useAuthStore()
-
-const courseId = Number(route.params.id)
-
-const { data: courseData, error } = await useAsyncData(
-  `course-${courseId}`,
-  () => apiFetch<ApiResponse<Course>>(`/courses/${courseId}`)
-)
-
-const course = computed(() => courseData.value?.data)
-
-useHead({
-  title: computed(() => course.value ? `${course.value.course_name} - BoomLearning` : 'Course - BoomLearning'),
-})
-
-if (error.value) {
-  throw createError({ statusCode: 404, message: 'Course not found' })
-}
-
-const thumbnail = computed(() => course.value ? resolveImageUrl(course.value.thumbnail) : null)
-
-const levelColor = computed(() => {
-  if (!course.value) return ''
-  return {
-    beginner: 'bg-green-100 text-green-700',
-    intermediate: 'bg-blue-100 text-blue-700',
-    advanced: 'bg-purple-100 text-purple-700',
-  }[course.value.level]
-})
-
-const totalLessons = computed(() => {
-  if (!course.value?.modules) return 0
-  return course.value.modules.reduce((sum, m) => sum + m.lessons_count, 0)
-})
-
-function handleEnroll() {
-  if (!auth.isAuthenticated) {
-    navigateTo(`/login?redirect=${encodeURIComponent(route.fullPath)}`)
-    return
-  }
-  // TODO: Phase 3 enrollment logic
-}
-</script>
-
 <template>
   <div v-if="course">
     <!-- Hero Banner -->
@@ -206,3 +152,57 @@ function handleEnroll() {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import {
+  Clock, Users, BarChart3, BookOpen, Award, Star,
+  ChevronRight, PlayCircle, CheckCircle
+} from 'lucide-vue-next'
+import type { ApiResponse } from '~/types/api'
+import type { Course } from '~/types/course'
+
+const route = useRoute()
+const { apiFetch } = useApi()
+const auth = useAuthStore()
+
+const courseId = Number(route.params.id)
+
+const { data: courseData, error } = await useAsyncData(
+  `course-${courseId}`,
+  () => apiFetch<ApiResponse<Course>>(`/courses/${courseId}`)
+)
+
+const course = computed(() => courseData.value?.data)
+
+useHead({
+  title: computed(() => course.value ? `${course.value.course_name} - BoomLearning` : 'Course - BoomLearning'),
+})
+
+if (error.value) {
+  throw createError({ statusCode: 404, message: 'Course not found' })
+}
+
+const thumbnail = computed(() => course.value ? resolveImageUrl(course.value.thumbnail) : null)
+
+const levelColor = computed(() => {
+  if (!course.value) return ''
+  return {
+    beginner: 'bg-green-100 text-green-700',
+    intermediate: 'bg-blue-100 text-blue-700',
+    advanced: 'bg-purple-100 text-purple-700',
+  }[course.value.level]
+})
+
+const totalLessons = computed(() => {
+  if (!course.value?.modules) return 0
+  return course.value.modules.reduce((sum, m) => sum + m.lessons_count, 0)
+})
+
+function handleEnroll() {
+  if (!auth.isAuthenticated) {
+    navigateTo(`/login?redirect=${encodeURIComponent(route.fullPath)}`)
+    return
+  }
+  // TODO: Phase 3 enrollment logic
+}
+</script>

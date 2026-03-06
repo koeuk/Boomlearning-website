@@ -1,101 +1,3 @@
-<script setup lang="ts">
-import { BookOpen, GraduationCap, Award, Users, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-vue-next'
-import type { ApiResponse } from '~/types/api'
-import type { Slide } from '~/types/slide'
-import type { Category } from '~/types/category'
-import type { Course } from '~/types/course'
-import type { Enrollment } from '~/types/enrollment'
-
-useHead({ title: 'BoomLearning - Learn, Grow, Succeed' })
-
-const auth = useAuthStore()
-const { apiFetch } = useApi()
-
-// Public data (always loaded)
-const { data: slidesData } = await useAsyncData('home-slides', () =>
-  apiFetch<ApiResponse<Slide[]>>('/slides')
-)
-const slides = computed(() => slidesData.value?.data ?? [])
-
-const { data: categoriesData } = await useAsyncData('home-categories', () =>
-  apiFetch<ApiResponse<Category[]>>('/categories')
-)
-const categories = computed(() => categoriesData.value?.data ?? [])
-
-const { data: featuredData, status: featuredStatus } = await useAsyncData('home-featured', () =>
-  apiFetch<ApiResponse<Course[]>>('/courses', { params: { 'filter[is_featured]': true } })
-)
-const featuredCourses = computed(() => featuredData.value?.data ?? [])
-
-// Authenticated dashboard data
-interface DashboardStats {
-  enrolled_courses: number
-  completed_courses: number
-  in_progress_courses: number
-  certificates_earned: number
-}
-
-interface ActivityItem {
-  id: number
-  type: string
-  description: string
-  created_at: string
-}
-
-const dashStats = ref<DashboardStats | null>(null)
-const dashEnrollments = ref<Enrollment[]>([])
-const dashActivities = ref<ActivityItem[]>([])
-const dashLoading = ref(false)
-
-async function loadDashboard() {
-  if (!auth.isAuthenticated) return
-  dashLoading.value = true
-  try {
-    const [statsRes, enrollRes, activityRes] = await Promise.all([
-      apiFetch<ApiResponse<DashboardStats>>('/dashboard/stats'),
-      apiFetch<ApiResponse<Enrollment[]>>('/dashboard/continue-learning'),
-      apiFetch<ApiResponse<ActivityItem[]>>('/dashboard/recent-activity'),
-    ])
-    dashStats.value = statsRes.data
-    dashEnrollments.value = enrollRes.data
-    dashActivities.value = activityRes.data
-  } catch {
-    // Dashboard data is optional, don't break the page
-  } finally {
-    dashLoading.value = false
-  }
-}
-
-// Slide carousel
-const currentSlide = ref(0)
-const slideCount = computed(() => slides.value.length)
-
-function nextSlide() {
-  if (slideCount.value > 0) {
-    currentSlide.value = (currentSlide.value + 1) % slideCount.value
-  }
-}
-
-function prevSlide() {
-  if (slideCount.value > 0) {
-    currentSlide.value = (currentSlide.value - 1 + slideCount.value) % slideCount.value
-  }
-}
-
-let slideInterval: ReturnType<typeof setInterval> | null = null
-
-onMounted(() => {
-  if (slideCount.value > 1) {
-    slideInterval = setInterval(nextSlide, 5000)
-  }
-  loadDashboard()
-})
-
-onUnmounted(() => {
-  if (slideInterval) clearInterval(slideInterval)
-})
-</script>
-
 <template>
   <div>
     <!-- Authenticated Dashboard Section -->
@@ -362,3 +264,101 @@ onUnmounted(() => {
     </section>
   </div>
 </template>
+
+<script setup lang="ts">
+import { BookOpen, GraduationCap, Award, Users, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-vue-next'
+import type { ApiResponse } from '~/types/api'
+import type { Slide } from '~/types/slide'
+import type { Category } from '~/types/category'
+import type { Course } from '~/types/course'
+import type { Enrollment } from '~/types/enrollment'
+
+useHead({ title: 'BoomLearning - Learn, Grow, Succeed' })
+
+const auth = useAuthStore()
+const { apiFetch } = useApi()
+
+// Public data (always loaded)
+const { data: slidesData } = await useAsyncData('home-slides', () =>
+  apiFetch<ApiResponse<Slide[]>>('/slides')
+)
+const slides = computed(() => slidesData.value?.data ?? [])
+
+const { data: categoriesData } = await useAsyncData('home-categories', () =>
+  apiFetch<ApiResponse<Category[]>>('/categories')
+)
+const categories = computed(() => categoriesData.value?.data ?? [])
+
+const { data: featuredData, status: featuredStatus } = await useAsyncData('home-featured', () =>
+  apiFetch<ApiResponse<Course[]>>('/courses', { params: { 'filter[is_featured]': true } })
+)
+const featuredCourses = computed(() => featuredData.value?.data ?? [])
+
+// Authenticated dashboard data
+interface DashboardStats {
+  enrolled_courses: number
+  completed_courses: number
+  in_progress_courses: number
+  certificates_earned: number
+}
+
+interface ActivityItem {
+  id: number
+  type: string
+  description: string
+  created_at: string
+}
+
+const dashStats = ref<DashboardStats | null>(null)
+const dashEnrollments = ref<Enrollment[]>([])
+const dashActivities = ref<ActivityItem[]>([])
+const dashLoading = ref(false)
+
+async function loadDashboard() {
+  if (!auth.isAuthenticated) return
+  dashLoading.value = true
+  try {
+    const [statsRes, enrollRes, activityRes] = await Promise.all([
+      apiFetch<ApiResponse<DashboardStats>>('/dashboard/stats'),
+      apiFetch<ApiResponse<Enrollment[]>>('/dashboard/continue-learning'),
+      apiFetch<ApiResponse<ActivityItem[]>>('/dashboard/recent-activity'),
+    ])
+    dashStats.value = statsRes.data
+    dashEnrollments.value = enrollRes.data
+    dashActivities.value = activityRes.data
+  } catch {
+    // Dashboard data is optional, don't break the page
+  } finally {
+    dashLoading.value = false
+  }
+}
+
+// Slide carousel
+const currentSlide = ref(0)
+const slideCount = computed(() => slides.value.length)
+
+function nextSlide() {
+  if (slideCount.value > 0) {
+    currentSlide.value = (currentSlide.value + 1) % slideCount.value
+  }
+}
+
+function prevSlide() {
+  if (slideCount.value > 0) {
+    currentSlide.value = (currentSlide.value - 1 + slideCount.value) % slideCount.value
+  }
+}
+
+let slideInterval: ReturnType<typeof setInterval> | null = null
+
+onMounted(() => {
+  if (slideCount.value > 1) {
+    slideInterval = setInterval(nextSlide, 5000)
+  }
+  loadDashboard()
+})
+
+onUnmounted(() => {
+  if (slideInterval) clearInterval(slideInterval)
+})
+</script>

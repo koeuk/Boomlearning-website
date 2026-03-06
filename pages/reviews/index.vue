@@ -1,35 +1,3 @@
-<script setup lang="ts">
-import { Star, Loader2, MessageSquare, Trash2 } from 'lucide-vue-next'
-import type { Review } from '~/types/review'
-import type { ApiResponse } from '~/types/api'
-
-definePageMeta({ middleware: 'auth' })
-useHead({ title: 'My Reviews - BoomLearning' })
-
-const { apiFetch } = useApi()
-
-const { data, status, refresh } = await useAsyncData('my-reviews', () =>
-  apiFetch<ApiResponse<Review[]>>('/reviews')
-)
-const reviews = computed(() => data.value?.data ?? [])
-
-const deleting = ref<number | null>(null)
-
-async function deleteReview(id: number) {
-  if (!confirm('Are you sure you want to delete this review?')) return
-  deleting.value = id
-  try {
-    await apiFetch(`/reviews/${id}`, { method: 'DELETE' })
-    await refresh()
-  } catch {}
-  deleting.value = null
-}
-
-function renderStars(rating: number) {
-  return '★'.repeat(rating) + '☆'.repeat(5 - rating)
-}
-</script>
-
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-2xl font-bold text-gray-900 mb-6">My Reviews</h1>
@@ -78,3 +46,35 @@ function renderStars(rating: number) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Star, Loader2, MessageSquare, Trash2 } from 'lucide-vue-next'
+import type { Review } from '~/types/review'
+import type { ApiResponse } from '~/types/api'
+
+definePageMeta({ middleware: 'auth' })
+useHead({ title: 'My Reviews - BoomLearning' })
+
+const { apiFetch } = useApi()
+
+const { data, status, refresh } = await useAsyncData('my-reviews', () =>
+  apiFetch<ApiResponse<Review[]>>('/reviews')
+)
+const reviews = computed(() => data.value?.data ?? [])
+
+const deleting = ref<number | null>(null)
+
+async function deleteReview(id: number) {
+  if (!confirm('Are you sure you want to delete this review?')) return
+  deleting.value = id
+  try {
+    await apiFetch(`/reviews/${id}`, { method: 'DELETE' })
+    await refresh()
+  } catch {}
+  deleting.value = null
+}
+
+function renderStars(rating: number) {
+  return '★'.repeat(rating) + '☆'.repeat(5 - rating)
+}
+</script>

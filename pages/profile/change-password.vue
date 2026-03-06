@@ -1,53 +1,3 @@
-<script setup lang="ts">
-import { ArrowLeft, Eye, EyeOff, Key, Loader2, CheckCircle } from 'lucide-vue-next'
-import type { ApiResponse } from '~/types/api'
-
-definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Change Password - BoomLearning' })
-
-const { apiFetch } = useApi()
-
-const form = reactive({
-  current_password: '',
-  new_password: '',
-  new_password_confirmation: '',
-})
-
-const showCurrent = ref(false)
-const showNew = ref(false)
-const loading = ref(false)
-const success = ref(false)
-const errors = ref<Record<string, string>>({})
-
-async function handleSubmit() {
-  errors.value = {}
-  success.value = false
-
-  if (!form.current_password) errors.value.current_password = 'Current password is required'
-  if (!form.new_password) errors.value.new_password = 'New password is required'
-  else if (!isMinLength(form.new_password, 8)) errors.value.new_password = 'Password must be at least 8 characters'
-  if (form.new_password !== form.new_password_confirmation) errors.value.new_password_confirmation = 'Passwords do not match'
-
-  if (Object.keys(errors.value).length > 0) return
-
-  loading.value = true
-  try {
-    await apiFetch<ApiResponse<any>>('/auth/change-password', {
-      method: 'PUT',
-      body: form,
-    })
-    success.value = true
-    form.current_password = ''
-    form.new_password = ''
-    form.new_password_confirmation = ''
-  } catch (error: any) {
-    errors.value = parseApiErrors(error)
-  } finally {
-    loading.value = false
-  }
-}
-</script>
-
 <template>
   <div class="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <NuxtLink to="/profile" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 mb-6">
@@ -133,3 +83,53 @@ async function handleSubmit() {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ArrowLeft, Eye, EyeOff, Key, Loader2, CheckCircle } from 'lucide-vue-next'
+import type { ApiResponse } from '~/types/api'
+
+definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Change Password - BoomLearning' })
+
+const { apiFetch } = useApi()
+
+const form = reactive({
+  current_password: '',
+  new_password: '',
+  new_password_confirmation: '',
+})
+
+const showCurrent = ref(false)
+const showNew = ref(false)
+const loading = ref(false)
+const success = ref(false)
+const errors = ref<Record<string, string>>({})
+
+async function handleSubmit() {
+  errors.value = {}
+  success.value = false
+
+  if (!form.current_password) errors.value.current_password = 'Current password is required'
+  if (!form.new_password) errors.value.new_password = 'New password is required'
+  else if (!isMinLength(form.new_password, 8)) errors.value.new_password = 'Password must be at least 8 characters'
+  if (form.new_password !== form.new_password_confirmation) errors.value.new_password_confirmation = 'Passwords do not match'
+
+  if (Object.keys(errors.value).length > 0) return
+
+  loading.value = true
+  try {
+    await apiFetch<ApiResponse<any>>('/auth/change-password', {
+      method: 'PUT',
+      body: form,
+    })
+    success.value = true
+    form.current_password = ''
+    form.new_password = ''
+    form.new_password_confirmation = ''
+  } catch (error: any) {
+    errors.value = parseApiErrors(error)
+  } finally {
+    loading.value = false
+  }
+}
+</script>

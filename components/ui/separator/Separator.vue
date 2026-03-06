@@ -1,3 +1,16 @@
+<template>
+  <Separator
+    v-bind="delegatedProps"
+    :class="
+      cn(
+        'shrink-0 bg-border',
+        props.orientation === 'horizontal' ? 'h-px w-full' : 'w-px h-full',
+        props.class,
+      )
+    "
+  />
+</template>
+
 <script setup lang="ts">
 import type { SeparatorProps } from "reka-ui"
 import type { HTMLAttributes } from "vue"
@@ -14,16 +27,3 @@ const props = withDefaults(defineProps<
 
 const delegatedProps = reactiveOmit(props, "class")
 </script>
-
-<template>
-  <Separator
-    v-bind="delegatedProps"
-    :class="
-      cn(
-        'shrink-0 bg-border',
-        props.orientation === 'horizontal' ? 'h-px w-full' : 'w-px h-full',
-        props.class,
-      )
-    "
-  />
-</template>

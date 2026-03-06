@@ -1,28 +1,3 @@
-<script setup lang="ts">
-import { ChevronDown, PlayCircle, FileText, HelpCircle } from 'lucide-vue-next'
-import type { Module } from '~/types/course'
-
-defineProps<{
-  modules: Module[]
-}>()
-
-const openModules = ref<Set<number>>(new Set())
-
-function toggle(moduleId: number) {
-  if (openModules.value.has(moduleId)) {
-    openModules.value.delete(moduleId)
-  } else {
-    openModules.value.add(moduleId)
-  }
-}
-
-const lessonIcon = {
-  video: PlayCircle,
-  text: FileText,
-  quiz: HelpCircle,
-} as const
-</script>
-
 <template>
   <div class="border border-gray-200 rounded-lg divide-y divide-gray-200">
     <div v-for="mod in modules" :key="mod.id">
@@ -77,3 +52,28 @@ const lessonIcon = {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ChevronDown, PlayCircle, FileText, HelpCircle } from 'lucide-vue-next'
+import type { Module } from '~/types/course'
+
+defineProps<{
+  modules: Module[]
+}>()
+
+const openModules = ref<Set<number>>(new Set())
+
+function toggle(moduleId: number) {
+  if (openModules.value.has(moduleId)) {
+    openModules.value.delete(moduleId)
+  } else {
+    openModules.value.add(moduleId)
+  }
+}
+
+const lessonIcon = {
+  video: PlayCircle,
+  text: FileText,
+  quiz: HelpCircle,
+} as const
+</script>

@@ -1,52 +1,3 @@
-<script setup lang="ts">
-import { CreditCard, Loader2, CheckCircle, ArrowLeft } from 'lucide-vue-next'
-import type { ApiResponse } from '~/types/api'
-
-definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Checkout - BoomLearning' })
-
-const route = useRoute()
-const { apiFetch } = useApi()
-
-const courseId = route.query.course as string | undefined
-const enrollmentId = route.query.enrollment as string | undefined
-
-const form = reactive({
-  payment_method: 'credit_card',
-})
-const loading = ref(false)
-const success = ref(false)
-const errors = ref<Record<string, string>>({})
-
-const paymentMethods = [
-  { value: 'credit_card', label: 'Credit Card' },
-  { value: 'debit_card', label: 'Debit Card' },
-  { value: 'paypal', label: 'PayPal' },
-  { value: 'bank_transfer', label: 'Bank Transfer' },
-]
-
-async function handlePayment() {
-  errors.value = {}
-  loading.value = true
-
-  try {
-    await apiFetch<ApiResponse<any>>('/payments', {
-      method: 'POST',
-      body: {
-        course_id: courseId,
-        enrollment_id: enrollmentId,
-        payment_method: form.payment_method,
-      },
-    })
-    success.value = true
-  } catch (error: any) {
-    errors.value = parseApiErrors(error)
-  } finally {
-    loading.value = false
-  }
-}
-</script>
-
 <template>
   <div class="max-w-lg mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <!-- Success -->
@@ -125,3 +76,52 @@ async function handlePayment() {
     </template>
   </div>
 </template>
+
+<script setup lang="ts">
+import { CreditCard, Loader2, CheckCircle, ArrowLeft } from 'lucide-vue-next'
+import type { ApiResponse } from '~/types/api'
+
+definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Checkout - BoomLearning' })
+
+const route = useRoute()
+const { apiFetch } = useApi()
+
+const courseId = route.query.course as string | undefined
+const enrollmentId = route.query.enrollment as string | undefined
+
+const form = reactive({
+  payment_method: 'credit_card',
+})
+const loading = ref(false)
+const success = ref(false)
+const errors = ref<Record<string, string>>({})
+
+const paymentMethods = [
+  { value: 'credit_card', label: 'Credit Card' },
+  { value: 'debit_card', label: 'Debit Card' },
+  { value: 'paypal', label: 'PayPal' },
+  { value: 'bank_transfer', label: 'Bank Transfer' },
+]
+
+async function handlePayment() {
+  errors.value = {}
+  loading.value = true
+
+  try {
+    await apiFetch<ApiResponse<any>>('/payments', {
+      method: 'POST',
+      body: {
+        course_id: courseId,
+        enrollment_id: enrollmentId,
+        payment_method: form.payment_method,
+      },
+    })
+    success.value = true
+  } catch (error: any) {
+    errors.value = parseApiErrors(error)
+  } finally {
+    loading.value = false
+  }
+}
+</script>

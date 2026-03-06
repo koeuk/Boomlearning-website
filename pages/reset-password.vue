@@ -1,51 +1,3 @@
-<script setup lang="ts">
-import { Eye, EyeOff, Lock, Loader2, CheckCircle } from 'lucide-vue-next'
-
-definePageMeta({
-  layout: 'auth',
-  middleware: 'guest',
-})
-
-useHead({ title: 'Reset Password - BoomLearning' })
-
-const route = useRoute()
-
-const form = reactive({
-  token: (route.query.token as string) || '',
-  email: (route.query.email as string) || '',
-  password: '',
-  password_confirmation: '',
-})
-const showPassword = ref(false)
-const loading = ref(false)
-const success = ref(false)
-const errors = ref<Record<string, string>>({})
-
-async function handleSubmit() {
-  errors.value = {}
-
-  if (!form.password) errors.value.password = 'Password is required'
-  else if (!isMinLength(form.password, 8)) errors.value.password = 'Password must be at least 8 characters'
-  if (form.password !== form.password_confirmation) errors.value.password_confirmation = 'Passwords do not match'
-
-  if (Object.keys(errors.value).length > 0) return
-
-  loading.value = true
-  try {
-    const { apiFetch } = useApi()
-    await apiFetch('/auth/reset-password', {
-      method: 'POST',
-      body: form,
-    })
-    success.value = true
-  } catch (error: any) {
-    errors.value = parseApiErrors(error)
-  } finally {
-    loading.value = false
-  }
-}
-</script>
-
 <template>
   <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
     <!-- Success -->
@@ -124,3 +76,51 @@ async function handleSubmit() {
     </template>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Eye, EyeOff, Lock, Loader2, CheckCircle } from 'lucide-vue-next'
+
+definePageMeta({
+  layout: 'auth',
+  middleware: 'guest',
+})
+
+useHead({ title: 'Reset Password - BoomLearning' })
+
+const route = useRoute()
+
+const form = reactive({
+  token: (route.query.token as string) || '',
+  email: (route.query.email as string) || '',
+  password: '',
+  password_confirmation: '',
+})
+const showPassword = ref(false)
+const loading = ref(false)
+const success = ref(false)
+const errors = ref<Record<string, string>>({})
+
+async function handleSubmit() {
+  errors.value = {}
+
+  if (!form.password) errors.value.password = 'Password is required'
+  else if (!isMinLength(form.password, 8)) errors.value.password = 'Password must be at least 8 characters'
+  if (form.password !== form.password_confirmation) errors.value.password_confirmation = 'Passwords do not match'
+
+  if (Object.keys(errors.value).length > 0) return
+
+  loading.value = true
+  try {
+    const { apiFetch } = useApi()
+    await apiFetch('/auth/reset-password', {
+      method: 'POST',
+      body: form,
+    })
+    success.value = true
+  } catch (error: any) {
+    errors.value = parseApiErrors(error)
+  } finally {
+    loading.value = false
+  }
+}
+</script>

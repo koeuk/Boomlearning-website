@@ -1,53 +1,3 @@
-<script setup lang="ts">
-import { BookOpen, Clock, CheckCircle, XCircle } from 'lucide-vue-next'
-import type { PaginatedResponse } from '~/types/api'
-import type { Enrollment } from '~/types/enrollment'
-
-definePageMeta({
-  middleware: 'auth',
-})
-
-useHead({ title: 'My Learning - BoomLearning' })
-
-const { apiFetch } = useApi()
-const page = ref(1)
-const filter = ref<'all' | 'active' | 'completed'>('all')
-
-const queryParams = computed(() => {
-  const params: Record<string, string | number> = { page: page.value }
-  if (filter.value !== 'all') params['filter[status]'] = filter.value
-  return params
-})
-
-const { data: enrollData, status } = await useAsyncData(
-  'my-enrollments',
-  () => apiFetch<PaginatedResponse<Enrollment>>('/enrollments', { params: queryParams.value }),
-  { watch: [queryParams] }
-)
-
-const enrollments = computed(() => enrollData.value?.data ?? [])
-const pagination = computed(() => enrollData.value?.pagination)
-
-watch(filter, () => { page.value = 1 })
-
-function statusColor(s: string) {
-  return {
-    active: 'text-blue-600 bg-blue-50',
-    completed: 'text-green-600 bg-green-50',
-    dropped: 'text-red-600 bg-red-50',
-    expired: 'text-gray-600 bg-gray-100',
-  }[s] ?? 'text-gray-600 bg-gray-100'
-}
-
-function statusIcon(s: string) {
-  return {
-    active: Clock,
-    completed: CheckCircle,
-    dropped: XCircle,
-  }[s] ?? Clock
-}
-</script>
-
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-8">
@@ -150,3 +100,53 @@ function statusIcon(s: string) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { BookOpen, Clock, CheckCircle, XCircle } from 'lucide-vue-next'
+import type { PaginatedResponse } from '~/types/api'
+import type { Enrollment } from '~/types/enrollment'
+
+definePageMeta({
+  middleware: 'auth',
+})
+
+useHead({ title: 'My Learning - BoomLearning' })
+
+const { apiFetch } = useApi()
+const page = ref(1)
+const filter = ref<'all' | 'active' | 'completed'>('all')
+
+const queryParams = computed(() => {
+  const params: Record<string, string | number> = { page: page.value }
+  if (filter.value !== 'all') params['filter[status]'] = filter.value
+  return params
+})
+
+const { data: enrollData, status } = await useAsyncData(
+  'my-enrollments',
+  () => apiFetch<PaginatedResponse<Enrollment>>('/enrollments', { params: queryParams.value }),
+  { watch: [queryParams] }
+)
+
+const enrollments = computed(() => enrollData.value?.data ?? [])
+const pagination = computed(() => enrollData.value?.pagination)
+
+watch(filter, () => { page.value = 1 })
+
+function statusColor(s: string) {
+  return {
+    active: 'text-blue-600 bg-blue-50',
+    completed: 'text-green-600 bg-green-50',
+    dropped: 'text-red-600 bg-red-50',
+    expired: 'text-gray-600 bg-gray-100',
+  }[s] ?? 'text-gray-600 bg-gray-100'
+}
+
+function statusIcon(s: string) {
+  return {
+    active: Clock,
+    completed: CheckCircle,
+    dropped: XCircle,
+  }[s] ?? Clock
+}
+</script>

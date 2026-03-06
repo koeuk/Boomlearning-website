@@ -1,69 +1,3 @@
-<script setup lang="ts">
-import { Search, ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import type { PaginatedResponse, ApiResponse } from '~/types/api'
-import type { Course } from '~/types/course'
-import type { Category } from '~/types/category'
-
-const route = useRoute()
-const { apiFetch } = useApi()
-
-const search = ref((route.query.q as string) || '')
-const level = ref('')
-const categoryId = ref('')
-const sort = ref('')
-const page = ref(1)
-
-useHead({
-  title: computed(() => search.value ? `Search: ${search.value} - BoomLearning` : 'Search - BoomLearning'),
-})
-
-// Fetch categories for filters
-const { data: catData } = await useAsyncData('search-categories', () =>
-  apiFetch<ApiResponse<Category[]>>('/data/categories')
-)
-const categories = computed(() => catData.value?.data ?? [])
-
-// Build params
-const queryParams = computed(() => {
-  const params: Record<string, string | number> = { page: page.value }
-  if (search.value) params['filter[search]'] = search.value
-  if (level.value) params['filter[level]'] = level.value
-  if (categoryId.value) params['filter[category_id]'] = categoryId.value
-  if (sort.value) params.sort = sort.value
-  return params
-})
-
-const { data: coursesData, status } = await useAsyncData(
-  'search-results',
-  () => apiFetch<PaginatedResponse<Course>>('/courses', { params: queryParams.value }),
-  { watch: [queryParams] }
-)
-
-const courses = computed(() => coursesData.value?.data ?? [])
-const pagination = computed(() => coursesData.value?.pagination)
-
-// Watch for URL query changes (from navbar search)
-watch(() => route.query.q, (val) => {
-  if (val && val !== search.value) {
-    search.value = val as string
-    page.value = 1
-  }
-})
-
-// Debounce search input
-let searchTimeout: ReturnType<typeof setTimeout> | null = null
-watch(search, () => {
-  if (searchTimeout) clearTimeout(searchTimeout)
-  searchTimeout = setTimeout(() => {
-    page.value = 1
-  }, 400)
-})
-
-watch([level, categoryId, sort], () => {
-  page.value = 1
-})
-</script>
-
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-8">
@@ -134,3 +68,69 @@ watch([level, categoryId, sort], () => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Search, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import type { PaginatedResponse, ApiResponse } from '~/types/api'
+import type { Course } from '~/types/course'
+import type { Category } from '~/types/category'
+
+const route = useRoute()
+const { apiFetch } = useApi()
+
+const search = ref((route.query.q as string) || '')
+const level = ref('')
+const categoryId = ref('')
+const sort = ref('')
+const page = ref(1)
+
+useHead({
+  title: computed(() => search.value ? `Search: ${search.value} - BoomLearning` : 'Search - BoomLearning'),
+})
+
+// Fetch categories for filters
+const { data: catData } = await useAsyncData('search-categories', () =>
+  apiFetch<ApiResponse<Category[]>>('/data/categories')
+)
+const categories = computed(() => catData.value?.data ?? [])
+
+// Build params
+const queryParams = computed(() => {
+  const params: Record<string, string | number> = { page: page.value }
+  if (search.value) params['filter[search]'] = search.value
+  if (level.value) params['filter[level]'] = level.value
+  if (categoryId.value) params['filter[category_id]'] = categoryId.value
+  if (sort.value) params.sort = sort.value
+  return params
+})
+
+const { data: coursesData, status } = await useAsyncData(
+  'search-results',
+  () => apiFetch<PaginatedResponse<Course>>('/courses', { params: queryParams.value }),
+  { watch: [queryParams] }
+)
+
+const courses = computed(() => coursesData.value?.data ?? [])
+const pagination = computed(() => coursesData.value?.pagination)
+
+// Watch for URL query changes (from navbar search)
+watch(() => route.query.q, (val) => {
+  if (val && val !== search.value) {
+    search.value = val as string
+    page.value = 1
+  }
+})
+
+// Debounce search input
+let searchTimeout: ReturnType<typeof setTimeout> | null = null
+watch(search, () => {
+  if (searchTimeout) clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    page.value = 1
+  }, 400)
+})
+
+watch([level, categoryId, sort], () => {
+  page.value = 1
+})
+</script>

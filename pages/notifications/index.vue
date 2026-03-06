@@ -1,52 +1,3 @@
-<script setup lang="ts">
-import { Bell, CheckCheck, Trash2, Loader2, Info, CheckCircle, AlertTriangle, AlertCircle, BookOpen, Award, Clock } from 'lucide-vue-next'
-
-definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Notifications - BoomLearning' })
-
-const notifications = useNotificationStore()
-const loading = ref(true)
-
-onMounted(async () => {
-  await notifications.fetch()
-  loading.value = false
-})
-
-const deleting = ref<number | null>(null)
-
-async function handleDelete(id: number) {
-  deleting.value = id
-  await notifications.remove(id)
-  deleting.value = null
-}
-
-function typeIcon(type: string) {
-  const map: Record<string, any> = {
-    info: Info,
-    success: CheckCircle,
-    warning: AlertTriangle,
-    error: AlertCircle,
-    enrollment: BookOpen,
-    completion: Award,
-    reminder: Clock,
-  }
-  return map[type] ?? Info
-}
-
-function typeColor(type: string) {
-  const map: Record<string, string> = {
-    info: 'text-blue-500 bg-blue-50',
-    success: 'text-green-500 bg-green-50',
-    warning: 'text-yellow-500 bg-yellow-50',
-    error: 'text-red-500 bg-red-50',
-    enrollment: 'text-primary-500 bg-primary-50',
-    completion: 'text-accent-500 bg-accent-50',
-    reminder: 'text-purple-500 bg-purple-50',
-  }
-  return map[type] ?? 'text-gray-500 bg-gray-50'
-}
-</script>
-
 <template>
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="flex items-center justify-between mb-6">
@@ -100,3 +51,52 @@ function typeColor(type: string) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Bell, CheckCheck, Trash2, Loader2, Info, CheckCircle, AlertTriangle, AlertCircle, BookOpen, Award, Clock } from 'lucide-vue-next'
+
+definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Notifications - BoomLearning' })
+
+const notifications = useNotificationStore()
+const loading = ref(true)
+
+onMounted(async () => {
+  await notifications.fetch()
+  loading.value = false
+})
+
+const deleting = ref<number | null>(null)
+
+async function handleDelete(id: number) {
+  deleting.value = id
+  await notifications.remove(id)
+  deleting.value = null
+}
+
+function typeIcon(type: string) {
+  const map: Record<string, any> = {
+    info: Info,
+    success: CheckCircle,
+    warning: AlertTriangle,
+    error: AlertCircle,
+    enrollment: BookOpen,
+    completion: Award,
+    reminder: Clock,
+  }
+  return map[type] ?? Info
+}
+
+function typeColor(type: string) {
+  const map: Record<string, string> = {
+    info: 'text-blue-500 bg-blue-50',
+    success: 'text-green-500 bg-green-50',
+    warning: 'text-yellow-500 bg-yellow-50',
+    error: 'text-red-500 bg-red-50',
+    enrollment: 'text-primary-500 bg-primary-50',
+    completion: 'text-accent-500 bg-accent-50',
+    reminder: 'text-purple-500 bg-purple-50',
+  }
+  return map[type] ?? 'text-gray-500 bg-gray-50'
+}
+</script>

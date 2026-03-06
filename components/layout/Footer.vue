@@ -1,21 +1,3 @@
-<script setup lang="ts">
-import { BookOpen, Mail, Phone, MapPin } from 'lucide-vue-next'
-
-const currentYear = new Date().getFullYear()
-
-const quickLinks = [
-  { label: 'Courses', to: '/courses' },
-  { label: 'Categories', to: '/categories' },
-  { label: 'Verify Certificate', to: '/certificates/verify' },
-]
-
-const accountLinks = [
-  { label: 'My Learning', to: '/enrollments' },
-  { label: 'Certificates', to: '/certificates' },
-  { label: 'Profile', to: '/profile' },
-]
-</script>
-
 <template>
   <footer class="bg-primary-900 text-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -85,3 +67,21 @@ const accountLinks = [
     </div>
   </footer>
 </template>
+
+<script setup lang="ts">
+import { BookOpen, Mail, Phone, MapPin } from 'lucide-vue-next'
+
+const currentYear = new Date().getFullYear()
+
+const quickLinks = [
+  { label: 'Courses', to: '/courses' },
+  { label: 'Categories', to: '/categories' },
+  { label: 'Verify Certificate', to: '/certificates/verify' },
+]
+
+const accountLinks = [
+  { label: 'My Learning', to: '/enrollments' },
+  { label: 'Certificates', to: '/certificates' },
+  { label: 'Profile', to: '/profile' },
+]
+</script>

@@ -1,24 +1,3 @@
-<script setup lang="ts">
-import { FileText, Download, PlayCircle, HelpCircle } from 'lucide-vue-next'
-import type { Lesson } from '~/types/course'
-
-const props = defineProps<{
-  lesson: Lesson
-}>()
-
-const lessonTypeLabel = computed(() => ({
-  video: 'Video Lesson',
-  text: 'Reading',
-  quiz: 'Quiz',
-}[props.lesson.lesson_type]))
-
-const lessonTypeIcon = computed(() => ({
-  video: PlayCircle,
-  text: FileText,
-  quiz: HelpCircle,
-}[props.lesson.lesson_type]))
-</script>
-
 <template>
   <div class="space-y-6">
     <!-- Lesson header -->
@@ -66,3 +45,24 @@ const lessonTypeIcon = computed(() => ({
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { FileText, Download, PlayCircle, HelpCircle } from 'lucide-vue-next'
+import type { Lesson } from '~/types/course'
+
+const props = defineProps<{
+  lesson: Lesson
+}>()
+
+const lessonTypeLabel = computed(() => ({
+  video: 'Video Lesson',
+  text: 'Reading',
+  quiz: 'Quiz',
+}[props.lesson.lesson_type]))
+
+const lessonTypeIcon = computed(() => ({
+  video: PlayCircle,
+  text: FileText,
+  quiz: HelpCircle,
+}[props.lesson.lesson_type]))
+</script>

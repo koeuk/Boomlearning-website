@@ -1,18 +1,3 @@
-<script setup lang="ts">
-import type { ApiResponse } from '~/types/api'
-import type { Category } from '~/types/category'
-
-useHead({ title: 'Categories - BoomLearning' })
-
-const { apiFetch } = useApi()
-
-const { data: catData, status } = await useAsyncData('categories', () =>
-  apiFetch<ApiResponse<Category[]>>('/categories')
-)
-
-const categories = computed(() => catData.value?.data ?? [])
-</script>
-
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div class="mb-8">
@@ -43,3 +28,18 @@ const categories = computed(() => catData.value?.data ?? [])
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { ApiResponse } from '~/types/api'
+import type { Category } from '~/types/category'
+
+useHead({ title: 'Categories - BoomLearning' })
+
+const { apiFetch } = useApi()
+
+const { data: catData, status } = await useAsyncData('categories', () =>
+  apiFetch<ApiResponse<Category[]>>('/categories')
+)
+
+const categories = computed(() => catData.value?.data ?? [])
+</script>

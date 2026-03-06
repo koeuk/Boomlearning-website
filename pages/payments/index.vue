@@ -1,29 +1,3 @@
-<script setup lang="ts">
-import { CreditCard, Loader2 } from 'lucide-vue-next'
-import type { Payment } from '~/types/payment'
-import type { PaginatedResponse } from '~/types/api'
-
-definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Payment History - BoomLearning' })
-
-const { apiFetch } = useApi()
-
-const { data, status } = await useAsyncData('my-payments', () =>
-  apiFetch<PaginatedResponse<Payment>>('/payments')
-)
-const payments = computed(() => data.value?.data ?? [])
-
-function statusColor(status: string) {
-  const map: Record<string, string> = {
-    completed: 'bg-green-50 text-green-700',
-    pending: 'bg-yellow-50 text-yellow-700',
-    failed: 'bg-red-50 text-red-700',
-    refunded: 'bg-gray-50 text-gray-700',
-  }
-  return map[status] ?? 'bg-gray-50 text-gray-700'
-}
-</script>
-
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <h1 class="text-2xl font-bold text-gray-900 mb-6">Payment History</h1>
@@ -95,3 +69,29 @@ function statusColor(status: string) {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { CreditCard, Loader2 } from 'lucide-vue-next'
+import type { Payment } from '~/types/payment'
+import type { PaginatedResponse } from '~/types/api'
+
+definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Payment History - BoomLearning' })
+
+const { apiFetch } = useApi()
+
+const { data, status } = await useAsyncData('my-payments', () =>
+  apiFetch<PaginatedResponse<Payment>>('/payments')
+)
+const payments = computed(() => data.value?.data ?? [])
+
+function statusColor(status: string) {
+  const map: Record<string, string> = {
+    completed: 'bg-green-50 text-green-700',
+    pending: 'bg-yellow-50 text-yellow-700',
+    failed: 'bg-red-50 text-red-700',
+    refunded: 'bg-gray-50 text-gray-700',
+  }
+  return map[status] ?? 'bg-gray-50 text-gray-700'
+}
+</script>

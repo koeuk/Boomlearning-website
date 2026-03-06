@@ -1,3 +1,7 @@
+<template>
+  <DropdownMenuSeparator v-bind="delegatedProps" :class="cn('-mx-1 my-1 h-px bg-muted', props.class)" />
+</template>
+
 <script setup lang="ts">
 import type { DropdownMenuSeparatorProps } from "reka-ui"
 import type { HTMLAttributes } from "vue"
@@ -13,7 +17,3 @@ const props = defineProps<DropdownMenuSeparatorProps & {
 
 const delegatedProps = reactiveOmit(props, "class")
 </script>
-
-<template>
-  <DropdownMenuSeparator v-bind="delegatedProps" :class="cn('-mx-1 my-1 h-px bg-muted', props.class)" />
-</template>

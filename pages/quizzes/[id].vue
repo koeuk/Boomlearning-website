@@ -1,43 +1,3 @@
-<script setup lang="ts">
-import {
-  ArrowLeft, Clock, Target, RotateCcw, HelpCircle,
-  CheckCircle, XCircle, ArrowRight
-} from 'lucide-vue-next'
-import type { ApiResponse } from '~/types/api'
-import type { Quiz, QuizAttempt } from '~/types/quiz'
-
-definePageMeta({
-  layout: 'learning',
-  middleware: 'auth',
-})
-
-const route = useRoute()
-const { apiFetch } = useApi()
-const quizId = Number(route.params.id)
-
-const { data: quizData, error } = await useAsyncData(
-  `quiz-${quizId}`,
-  () => apiFetch<ApiResponse<Quiz>>(`/quizzes/${quizId}`)
-)
-
-const quiz = computed(() => quizData.value?.data)
-
-useHead({
-  title: computed(() => quiz.value ? `${quiz.value.quiz_title} - BoomLearning` : 'Quiz - BoomLearning'),
-})
-
-if (error.value) {
-  throw createError({ statusCode: 404, message: 'Quiz not found' })
-}
-
-// Fetch attempts
-const { data: attemptsData } = await useAsyncData(
-  `quiz-${quizId}-attempts`,
-  () => apiFetch<ApiResponse<QuizAttempt[]>>(`/quizzes/${quizId}/attempts`)
-)
-const attempts = computed(() => attemptsData.value?.data ?? [])
-</script>
-
 <template>
   <div v-if="quiz" class="min-h-screen flex flex-col">
     <!-- Top bar -->
@@ -150,3 +110,43 @@ const attempts = computed(() => attemptsData.value?.data ?? [])
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+import {
+  ArrowLeft, Clock, Target, RotateCcw, HelpCircle,
+  CheckCircle, XCircle, ArrowRight
+} from 'lucide-vue-next'
+import type { ApiResponse } from '~/types/api'
+import type { Quiz, QuizAttempt } from '~/types/quiz'
+
+definePageMeta({
+  layout: 'learning',
+  middleware: 'auth',
+})
+
+const route = useRoute()
+const { apiFetch } = useApi()
+const quizId = Number(route.params.id)
+
+const { data: quizData, error } = await useAsyncData(
+  `quiz-${quizId}`,
+  () => apiFetch<ApiResponse<Quiz>>(`/quizzes/${quizId}`)
+)
+
+const quiz = computed(() => quizData.value?.data)
+
+useHead({
+  title: computed(() => quiz.value ? `${quiz.value.quiz_title} - BoomLearning` : 'Quiz - BoomLearning'),
+})
+
+if (error.value) {
+  throw createError({ statusCode: 404, message: 'Quiz not found' })
+}
+
+// Fetch attempts
+const { data: attemptsData } = await useAsyncData(
+  `quiz-${quizId}-attempts`,
+  () => apiFetch<ApiResponse<QuizAttempt[]>>(`/quizzes/${quizId}/attempts`)
+)
+const attempts = computed(() => attemptsData.value?.data ?? [])
+</script>

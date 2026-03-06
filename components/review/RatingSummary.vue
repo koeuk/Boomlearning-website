@@ -1,20 +1,3 @@
-<script setup lang="ts">
-const props = defineProps<{
-  averageRating: number
-  totalReviews: number
-  breakdown?: Record<number, number>
-}>()
-
-const bars = computed(() => {
-  if (!props.breakdown || props.totalReviews === 0) return []
-  return [5, 4, 3, 2, 1].map(star => ({
-    star,
-    count: props.breakdown![star] || 0,
-    percent: ((props.breakdown![star] || 0) / props.totalReviews) * 100,
-  }))
-})
-</script>
-
 <template>
   <div class="flex flex-col sm:flex-row gap-6">
     <!-- Average -->
@@ -39,3 +22,20 @@ const bars = computed(() => {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+const props = defineProps<{
+  averageRating: number
+  totalReviews: number
+  breakdown?: Record<number, number>
+}>()
+
+const bars = computed(() => {
+  if (!props.breakdown || props.totalReviews === 0) return []
+  return [5, 4, 3, 2, 1].map(star => ({
+    star,
+    count: props.breakdown![star] || 0,
+    percent: ((props.breakdown![star] || 0) / props.totalReviews) * 100,
+  }))
+})
+</script>

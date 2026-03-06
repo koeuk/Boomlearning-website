@@ -1,3 +1,36 @@
+<template>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <template v-if="loading">
+      <div v-for="i in 4" :key="i" class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div class="space-y-2">
+            <Skeleton class="h-4 w-16" />
+            <Skeleton class="h-8 w-12" />
+          </div>
+          <Skeleton class="w-12 h-12 rounded-xl" />
+        </div>
+      </div>
+    </template>
+    <template v-else-if="stats">
+      <div
+        v-for="card in cards"
+        :key="card.key"
+        :class="['rounded-2xl border p-5 shadow-sm hover:shadow-md transition-all duration-300 cursor-default', card.bg, card.border]"
+      >
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">{{ card.label }}</p>
+            <p class="text-3xl font-bold text-gray-900 mt-1">{{ stats[card.key] }}</p>
+          </div>
+          <div :class="['w-12 h-12 rounded-xl flex items-center justify-center', card.iconBg]">
+            <component :is="card.icon" :class="['w-6 h-6', card.iconColor]" />
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { BookOpen, CheckCircle, Clock, Award, TrendingUp } from 'lucide-vue-next'
 
@@ -50,36 +83,3 @@ const cards = computed(() => [
   },
 ])
 </script>
-
-<template>
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-    <template v-if="loading">
-      <div v-for="i in 4" :key="i" class="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-        <div class="flex items-center justify-between">
-          <div class="space-y-2">
-            <Skeleton class="h-4 w-16" />
-            <Skeleton class="h-8 w-12" />
-          </div>
-          <Skeleton class="w-12 h-12 rounded-xl" />
-        </div>
-      </div>
-    </template>
-    <template v-else-if="stats">
-      <div
-        v-for="card in cards"
-        :key="card.key"
-        :class="['rounded-2xl border p-5 shadow-sm hover:shadow-md transition-all duration-300 cursor-default', card.bg, card.border]"
-      >
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">{{ card.label }}</p>
-            <p class="text-3xl font-bold text-gray-900 mt-1">{{ stats[card.key] }}</p>
-          </div>
-          <div :class="['w-12 h-12 rounded-xl flex items-center justify-center', card.iconBg]">
-            <component :is="card.icon" :class="['w-6 h-6', card.iconColor]" />
-          </div>
-        </div>
-      </div>
-    </template>
-  </div>
-</template>

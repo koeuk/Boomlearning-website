@@ -1,54 +1,3 @@
-<script setup lang="ts">
-import { ArrowLeft, ArrowRight, CheckCircle, Loader2 } from 'lucide-vue-next'
-import type { ApiResponse } from '~/types/api'
-import type { Lesson } from '~/types/course'
-
-definePageMeta({
-  layout: 'learning',
-  middleware: 'auth',
-})
-
-const route = useRoute()
-const { apiFetch } = useApi()
-const lessonId = Number(route.params.id)
-
-const { data: lessonData, error } = await useAsyncData(
-  `lesson-${lessonId}`,
-  () => apiFetch<ApiResponse<Lesson>>(`/lessons/${lessonId}`)
-)
-
-const lesson = computed(() => lessonData.value?.data)
-
-useHead({
-  title: computed(() => lesson.value ? `${lesson.value.lesson_title} - BoomLearning` : 'Lesson - BoomLearning'),
-})
-
-if (error.value) {
-  throw createError({ statusCode: 404, message: 'Lesson not found' })
-}
-
-const isCompleted = computed(() => lesson.value?.progress?.status === 'completed')
-const markingComplete = ref(false)
-
-async function markComplete() {
-  if (!lesson.value || markingComplete.value) return
-  markingComplete.value = true
-  try {
-    await apiFetch(`/lessons/${lesson.value.id}/progress`, {
-      method: 'POST',
-      body: { status: 'completed' },
-    })
-    if (lesson.value.progress) {
-      lesson.value.progress.status = 'completed'
-    }
-  } catch {
-    // Silent fail
-  } finally {
-    markingComplete.value = false
-  }
-}
-</script>
-
 <template>
   <div v-if="lesson" class="min-h-screen flex flex-col">
     <!-- Top bar -->
@@ -108,3 +57,54 @@ async function markComplete() {
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ArrowLeft, ArrowRight, CheckCircle, Loader2 } from 'lucide-vue-next'
+import type { ApiResponse } from '~/types/api'
+import type { Lesson } from '~/types/course'
+
+definePageMeta({
+  layout: 'learning',
+  middleware: 'auth',
+})
+
+const route = useRoute()
+const { apiFetch } = useApi()
+const lessonId = Number(route.params.id)
+
+const { data: lessonData, error } = await useAsyncData(
+  `lesson-${lessonId}`,
+  () => apiFetch<ApiResponse<Lesson>>(`/lessons/${lessonId}`)
+)
+
+const lesson = computed(() => lessonData.value?.data)
+
+useHead({
+  title: computed(() => lesson.value ? `${lesson.value.lesson_title} - BoomLearning` : 'Lesson - BoomLearning'),
+})
+
+if (error.value) {
+  throw createError({ statusCode: 404, message: 'Lesson not found' })
+}
+
+const isCompleted = computed(() => lesson.value?.progress?.status === 'completed')
+const markingComplete = ref(false)
+
+async function markComplete() {
+  if (!lesson.value || markingComplete.value) return
+  markingComplete.value = true
+  try {
+    await apiFetch(`/lessons/${lesson.value.id}/progress`, {
+      method: 'POST',
+      body: { status: 'completed' },
+    })
+    if (lesson.value.progress) {
+      lesson.value.progress.status = 'completed'
+    }
+  } catch {
+    // Silent fail
+  } finally {
+    markingComplete.value = false
+  }
+}
+</script>

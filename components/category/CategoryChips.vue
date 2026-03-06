@@ -1,20 +1,3 @@
-<script setup lang="ts">
-import type { Category } from '~/types/category'
-
-const props = defineProps<{
-  categories: Category[]
-  modelValue?: number | null
-}>()
-
-const emit = defineEmits<{
-  'update:modelValue': [value: number | null]
-}>()
-
-function select(id: number | null) {
-  emit('update:modelValue', id)
-}
-</script>
-
 <template>
   <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
     <button
@@ -39,3 +22,20 @@ function select(id: number | null) {
     </button>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { Category } from '~/types/category'
+
+const props = defineProps<{
+  categories: Category[]
+  modelValue?: number | null
+}>()
+
+const emit = defineEmits<{
+  'update:modelValue': [value: number | null]
+}>()
+
+function select(id: number | null) {
+  emit('update:modelValue', id)
+}
+</script>

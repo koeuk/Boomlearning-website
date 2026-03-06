@@ -1,44 +1,3 @@
-<script setup lang="ts">
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import type { ApiResponse, PaginatedResponse } from '~/types/api'
-import type { Category } from '~/types/category'
-import type { Course } from '~/types/course'
-
-const route = useRoute()
-const { apiFetch } = useApi()
-const categoryId = Number(route.params.id)
-const page = ref(1)
-
-// Fetch category details
-const { data: catData, error } = await useAsyncData(
-  `category-${categoryId}`,
-  () => apiFetch<ApiResponse<Category>>(`/categories/${categoryId}`)
-)
-
-const category = computed(() => catData.value?.data)
-
-useHead({
-  title: computed(() => category.value ? `${category.value.category_name} - BoomLearning` : 'Category - BoomLearning'),
-})
-
-if (error.value) {
-  throw createError({ statusCode: 404, message: 'Category not found' })
-}
-
-// Fetch courses in category
-const { data: coursesData, status: coursesStatus } = await useAsyncData(
-  `category-${categoryId}-courses`,
-  () => apiFetch<PaginatedResponse<Course>>(`/categories/${categoryId}/courses`, {
-    params: { page: page.value },
-  }),
-  { watch: [page] }
-)
-
-const courses = computed(() => coursesData.value?.data ?? [])
-const pagination = computed(() => coursesData.value?.pagination)
-const image = computed(() => category.value ? resolveImageUrl(category.value.image) : null)
-</script>
-
 <template>
   <div v-if="category">
     <!-- Hero -->
@@ -105,3 +64,44 @@ const image = computed(() => category.value ? resolveImageUrl(category.value.ima
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import type { ApiResponse, PaginatedResponse } from '~/types/api'
+import type { Category } from '~/types/category'
+import type { Course } from '~/types/course'
+
+const route = useRoute()
+const { apiFetch } = useApi()
+const categoryId = Number(route.params.id)
+const page = ref(1)
+
+// Fetch category details
+const { data: catData, error } = await useAsyncData(
+  `category-${categoryId}`,
+  () => apiFetch<ApiResponse<Category>>(`/categories/${categoryId}`)
+)
+
+const category = computed(() => catData.value?.data)
+
+useHead({
+  title: computed(() => category.value ? `${category.value.category_name} - BoomLearning` : 'Category - BoomLearning'),
+})
+
+if (error.value) {
+  throw createError({ statusCode: 404, message: 'Category not found' })
+}
+
+// Fetch courses in category
+const { data: coursesData, status: coursesStatus } = await useAsyncData(
+  `category-${categoryId}-courses`,
+  () => apiFetch<PaginatedResponse<Course>>(`/categories/${categoryId}/courses`, {
+    params: { page: page.value },
+  }),
+  { watch: [page] }
+)
+
+const courses = computed(() => coursesData.value?.data ?? [])
+const pagination = computed(() => coursesData.value?.pagination)
+const image = computed(() => category.value ? resolveImageUrl(category.value.image) : null)
+</script>

@@ -1,34 +1,3 @@
-<script setup lang="ts">
-import {
-  ArrowLeft, CheckCircle, XCircle, Trophy, RotateCcw, ArrowRight
-} from 'lucide-vue-next'
-import type { ApiResponse } from '~/types/api'
-import type { QuizAttempt } from '~/types/quiz'
-
-definePageMeta({
-  layout: 'learning',
-  middleware: 'auth',
-})
-
-const route = useRoute()
-const { apiFetch } = useApi()
-const quizId = Number(route.params.id)
-const attemptId = Number(route.params.attemptId)
-
-const { data: attemptData, error } = await useAsyncData(
-  `quiz-attempt-${attemptId}`,
-  () => apiFetch<ApiResponse<QuizAttempt>>(`/quizzes/attempts/${attemptId}`)
-)
-
-const attempt = computed(() => attemptData.value?.data)
-
-useHead({ title: 'Quiz Results - BoomLearning' })
-
-if (error.value) {
-  throw createError({ statusCode: 404, message: 'Quiz attempt not found' })
-}
-</script>
-
 <template>
   <div v-if="attempt" class="min-h-screen flex flex-col">
     <!-- Top bar -->
@@ -101,3 +70,34 @@ if (error.value) {
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+import {
+  ArrowLeft, CheckCircle, XCircle, Trophy, RotateCcw, ArrowRight
+} from 'lucide-vue-next'
+import type { ApiResponse } from '~/types/api'
+import type { QuizAttempt } from '~/types/quiz'
+
+definePageMeta({
+  layout: 'learning',
+  middleware: 'auth',
+})
+
+const route = useRoute()
+const { apiFetch } = useApi()
+const quizId = Number(route.params.id)
+const attemptId = Number(route.params.attemptId)
+
+const { data: attemptData, error } = await useAsyncData(
+  `quiz-attempt-${attemptId}`,
+  () => apiFetch<ApiResponse<QuizAttempt>>(`/quizzes/attempts/${attemptId}`)
+)
+
+const attempt = computed(() => attemptData.value?.data)
+
+useHead({ title: 'Quiz Results - BoomLearning' })
+
+if (error.value) {
+  throw createError({ statusCode: 404, message: 'Quiz attempt not found' })
+}
+</script>

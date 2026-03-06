@@ -1,46 +1,3 @@
-<script setup lang="ts">
-import { Mail, ArrowLeft, Loader2, CheckCircle } from 'lucide-vue-next'
-
-definePageMeta({
-  layout: 'auth',
-  middleware: 'guest',
-})
-
-useHead({ title: 'Forgot Password - BoomLearning' })
-
-const form = reactive({ email: '' })
-const loading = ref(false)
-const success = ref(false)
-const errors = ref<Record<string, string>>({})
-
-async function handleSubmit() {
-  errors.value = {}
-
-  if (!form.email.trim()) {
-    errors.value.email = 'Email is required'
-    return
-  }
-  if (!isValidEmail(form.email)) {
-    errors.value.email = 'Invalid email address'
-    return
-  }
-
-  loading.value = true
-  try {
-    const { apiFetch } = useApi()
-    await apiFetch('/auth/forgot-password', {
-      method: 'POST',
-      body: { email: form.email },
-    })
-    success.value = true
-  } catch (error: any) {
-    errors.value = parseApiErrors(error)
-  } finally {
-    loading.value = false
-  }
-}
-</script>
-
 <template>
   <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
     <!-- Success State -->
@@ -111,3 +68,46 @@ async function handleSubmit() {
     </template>
   </div>
 </template>
+
+<script setup lang="ts">
+import { Mail, ArrowLeft, Loader2, CheckCircle } from 'lucide-vue-next'
+
+definePageMeta({
+  layout: 'auth',
+  middleware: 'guest',
+})
+
+useHead({ title: 'Forgot Password - BoomLearning' })
+
+const form = reactive({ email: '' })
+const loading = ref(false)
+const success = ref(false)
+const errors = ref<Record<string, string>>({})
+
+async function handleSubmit() {
+  errors.value = {}
+
+  if (!form.email.trim()) {
+    errors.value.email = 'Email is required'
+    return
+  }
+  if (!isValidEmail(form.email)) {
+    errors.value.email = 'Invalid email address'
+    return
+  }
+
+  loading.value = true
+  try {
+    const { apiFetch } = useApi()
+    await apiFetch('/auth/forgot-password', {
+      method: 'POST',
+      body: { email: form.email },
+    })
+    success.value = true
+  } catch (error: any) {
+    errors.value = parseApiErrors(error)
+  } finally {
+    loading.value = false
+  }
+}
+</script>

@@ -1,3 +1,62 @@
+<template>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Courses</h1>
+      <p class="text-gray-500 mt-1">Browse and find the perfect course for you</p>
+    </div>
+
+    <CourseFilters
+      v-model:search="search"
+      v-model:level="level"
+      v-model:category-id="categoryId"
+      v-model:sort="sort"
+      :categories="categories"
+    />
+
+    <div class="mt-8">
+      <CourseGrid
+        :courses="courses"
+        :loading="status === 'pending'"
+        empty-message="No courses match your filters. Try adjusting your search."
+      />
+    </div>
+
+    <!-- Pagination -->
+    <div v-if="pagination && pagination.total_pages > 1" class="mt-8 flex items-center justify-center gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        :disabled="page <= 1"
+        @click="page--"
+      >
+        <ChevronLeft class="w-4 h-4" />
+      </Button>
+      <template v-for="p in pagination.total_pages" :key="p">
+        <Button
+          v-if="p === 1 || p === pagination.total_pages || (p >= page - 1 && p <= page + 1)"
+          :variant="p === page ? 'default' : 'outline'"
+          size="sm"
+          @click="page = p"
+        >
+          {{ p }}
+        </Button>
+        <span
+          v-else-if="p === page - 2 || p === page + 2"
+          class="px-1 text-gray-400"
+        >...</span>
+      </template>
+      <Button
+        variant="outline"
+        size="sm"
+        :disabled="page >= pagination.total_pages"
+        @click="page++"
+      >
+        <ChevronRight class="w-4 h-4" />
+      </Button>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import type { PaginatedResponse, ApiResponse } from '~/types/api'
@@ -66,62 +125,3 @@ watch([search, level, categoryId, sort, page], () => {
   navigateTo({ query }, { replace: true })
 })
 </script>
-
-<template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Courses</h1>
-      <p class="text-gray-500 mt-1">Browse and find the perfect course for you</p>
-    </div>
-
-    <CourseFilters
-      v-model:search="search"
-      v-model:level="level"
-      v-model:category-id="categoryId"
-      v-model:sort="sort"
-      :categories="categories"
-    />
-
-    <div class="mt-8">
-      <CourseGrid
-        :courses="courses"
-        :loading="status === 'pending'"
-        empty-message="No courses match your filters. Try adjusting your search."
-      />
-    </div>
-
-    <!-- Pagination -->
-    <div v-if="pagination && pagination.total_pages > 1" class="mt-8 flex items-center justify-center gap-2">
-      <Button
-        variant="outline"
-        size="sm"
-        :disabled="page <= 1"
-        @click="page--"
-      >
-        <ChevronLeft class="w-4 h-4" />
-      </Button>
-      <template v-for="p in pagination.total_pages" :key="p">
-        <Button
-          v-if="p === 1 || p === pagination.total_pages || (p >= page - 1 && p <= page + 1)"
-          :variant="p === page ? 'default' : 'outline'"
-          size="sm"
-          @click="page = p"
-        >
-          {{ p }}
-        </Button>
-        <span
-          v-else-if="p === page - 2 || p === page + 2"
-          class="px-1 text-gray-400"
-        >...</span>
-      </template>
-      <Button
-        variant="outline"
-        size="sm"
-        :disabled="page >= pagination.total_pages"
-        @click="page++"
-      >
-        <ChevronRight class="w-4 h-4" />
-      </Button>
-    </div>
-  </div>
-</template>

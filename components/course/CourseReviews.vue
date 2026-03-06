@@ -1,28 +1,3 @@
-<script setup lang="ts">
-import type { PaginatedResponse } from '~/types/api'
-import type { Review } from '~/types/review'
-
-const props = defineProps<{
-  courseId: number
-  averageRating: number
-  reviewsCount: number
-}>()
-
-const { apiFetch } = useApi()
-const page = ref(1)
-
-const { data: reviewsData, status } = await useAsyncData(
-  `course-${props.courseId}-reviews`,
-  () => apiFetch<PaginatedResponse<Review>>(`/courses/${props.courseId}/reviews`, {
-    params: { page: page.value },
-  }),
-  { watch: [page] }
-)
-
-const reviews = computed(() => reviewsData.value?.data ?? [])
-const pagination = computed(() => reviewsData.value?.pagination)
-</script>
-
 <template>
   <div class="space-y-6">
     <ReviewRatingSummary
@@ -74,3 +49,28 @@ const pagination = computed(() => reviewsData.value?.pagination)
     <p v-else class="text-center text-sm text-gray-400 py-8">No reviews yet.</p>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { PaginatedResponse } from '~/types/api'
+import type { Review } from '~/types/review'
+
+const props = defineProps<{
+  courseId: number
+  averageRating: number
+  reviewsCount: number
+}>()
+
+const { apiFetch } = useApi()
+const page = ref(1)
+
+const { data: reviewsData, status } = await useAsyncData(
+  `course-${props.courseId}-reviews`,
+  () => apiFetch<PaginatedResponse<Review>>(`/courses/${props.courseId}/reviews`, {
+    params: { page: page.value },
+  }),
+  { watch: [page] }
+)
+
+const reviews = computed(() => reviewsData.value?.data ?? [])
+const pagination = computed(() => reviewsData.value?.pagination)
+</script>

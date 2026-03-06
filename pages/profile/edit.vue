@@ -1,72 +1,3 @@
-<script setup lang="ts">
-import { ArrowLeft, Save, Loader2, Camera } from 'lucide-vue-next'
-import type { ApiResponse } from '~/types/api'
-
-definePageMeta({ middleware: 'auth' })
-useHead({ title: 'Edit Profile - BoomLearning' })
-
-const auth = useAuthStore()
-
-const form = reactive({
-  full_name: auth.user?.full_name ?? '',
-  phone: auth.user?.phone ?? '',
-  date_of_birth: auth.user?.date_of_birth ?? '',
-  gender: auth.user?.gender ?? '',
-  address: auth.user?.address ?? '',
-})
-
-const profilePicture = ref<File | null>(null)
-const previewUrl = ref<string | null>(auth.user?.image_url ?? null)
-const loading = ref(false)
-const success = ref(false)
-const errors = ref<Record<string, string>>({})
-
-function onFileChange(e: Event) {
-  const input = e.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (file) {
-    profilePicture.value = file
-    previewUrl.value = URL.createObjectURL(file)
-  }
-}
-
-async function handleSubmit() {
-  errors.value = {}
-  success.value = false
-
-  if (!form.full_name.trim()) {
-    errors.value.full_name = 'Full name is required'
-    return
-  }
-
-  loading.value = true
-  try {
-    const { apiFetch } = useApi()
-    const formData = new FormData()
-    formData.append('full_name', form.full_name)
-    if (form.phone) formData.append('phone', form.phone)
-    if (form.date_of_birth) formData.append('date_of_birth', form.date_of_birth)
-    if (form.gender) formData.append('gender', form.gender)
-    if (form.address) formData.append('address', form.address)
-    if (profilePicture.value) formData.append('profile_picture', profilePicture.value)
-
-    // PUT with FormData requires _method override
-    formData.append('_method', 'PUT')
-    await apiFetch<ApiResponse<any>>('/auth/profile', {
-      method: 'POST',
-      body: formData,
-    })
-
-    await auth.fetchProfile()
-    success.value = true
-  } catch (error: any) {
-    errors.value = parseApiErrors(error)
-  } finally {
-    loading.value = false
-  }
-}
-</script>
-
 <template>
   <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <NuxtLink to="/profile" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 mb-6">
@@ -187,3 +118,72 @@ async function handleSubmit() {
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ArrowLeft, Save, Loader2, Camera } from 'lucide-vue-next'
+import type { ApiResponse } from '~/types/api'
+
+definePageMeta({ middleware: 'auth' })
+useHead({ title: 'Edit Profile - BoomLearning' })
+
+const auth = useAuthStore()
+
+const form = reactive({
+  full_name: auth.user?.full_name ?? '',
+  phone: auth.user?.phone ?? '',
+  date_of_birth: auth.user?.date_of_birth ?? '',
+  gender: auth.user?.gender ?? '',
+  address: auth.user?.address ?? '',
+})
+
+const profilePicture = ref<File | null>(null)
+const previewUrl = ref<string | null>(auth.user?.image_url ?? null)
+const loading = ref(false)
+const success = ref(false)
+const errors = ref<Record<string, string>>({})
+
+function onFileChange(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (file) {
+    profilePicture.value = file
+    previewUrl.value = URL.createObjectURL(file)
+  }
+}
+
+async function handleSubmit() {
+  errors.value = {}
+  success.value = false
+
+  if (!form.full_name.trim()) {
+    errors.value.full_name = 'Full name is required'
+    return
+  }
+
+  loading.value = true
+  try {
+    const { apiFetch } = useApi()
+    const formData = new FormData()
+    formData.append('full_name', form.full_name)
+    if (form.phone) formData.append('phone', form.phone)
+    if (form.date_of_birth) formData.append('date_of_birth', form.date_of_birth)
+    if (form.gender) formData.append('gender', form.gender)
+    if (form.address) formData.append('address', form.address)
+    if (profilePicture.value) formData.append('profile_picture', profilePicture.value)
+
+    // PUT with FormData requires _method override
+    formData.append('_method', 'PUT')
+    await apiFetch<ApiResponse<any>>('/auth/profile', {
+      method: 'POST',
+      body: formData,
+    })
+
+    await auth.fetchProfile()
+    success.value = true
+  } catch (error: any) {
+    errors.value = parseApiErrors(error)
+  } finally {
+    loading.value = false
+  }
+}
+</script>
