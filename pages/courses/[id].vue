@@ -2,18 +2,18 @@
   <div v-if="course">
     <!-- Hero Banner -->
     <div class="bg-gradient-to-r from-primary-800 to-primary-600">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-        <div class="flex items-center gap-2 text-primary-200 text-sm mb-4">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
+        <div class="flex items-center gap-2 text-primary-200 text-sm mb-2">
           <NuxtLink to="/courses" class="hover:text-white">Courses</NuxtLink>
           <ChevronRight class="w-4 h-4" />
           <NuxtLink :to="`/categories/${course.category?.id}`" class="hover:text-white">
             {{ course.category?.category_name }}
           </NuxtLink>
         </div>
-        <h1 class="text-2xl md:text-3xl font-bold text-white mb-3">
+        <h1 class="text-xl md:text-2xl font-bold text-white mb-1">
           {{ course.course_name }}
         </h1>
-        <p class="text-primary-100 max-w-2xl mb-4">{{ course.description }}</p>
+        <p class="text-primary-100 text-sm max-w-2xl mb-2">{{ course.description }}</p>
         <div class="flex flex-wrap items-center gap-4 text-sm text-primary-100">
           <Badge :class="levelColor" variant="secondary">{{ course.level }}</Badge>
           <span class="flex items-center gap-1">

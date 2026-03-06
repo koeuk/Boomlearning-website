@@ -1,5 +1,9 @@
 <template>
   <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <NuxtLink to="/" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 mb-4">
+      <ArrowLeft class="w-4 h-4" />
+      Back to Home
+    </NuxtLink>
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-2xl font-bold text-gray-900">Profile</h1>
       <div class="flex gap-2">
@@ -93,7 +97,7 @@
 </template>
 
 <script setup lang="ts">
-import { User, Mail, Phone, Calendar, MapPin, Edit, Key } from 'lucide-vue-next'
+import { ArrowLeft, User, Mail, Phone, Calendar, MapPin, Edit, Key } from 'lucide-vue-next'
 
 definePageMeta({ middleware: 'auth' })
 useHead({ title: 'Profile - BoomLearning' })

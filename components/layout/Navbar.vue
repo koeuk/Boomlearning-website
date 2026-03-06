@@ -1,22 +1,22 @@
 <template>
-  <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+  <nav class="bg-primary-800 sticky top-0 z-50 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16">
+      <div class="flex justify-between h-10">
         <!-- Logo + Nav Links -->
-        <div class="flex items-center gap-8">
+        <div class="flex items-center gap-6">
           <NuxtLink to="/" class="flex items-center gap-2">
-            <span class="text-xl font-bold text-primary-600">BoomLearning</span>
+            <span class="text-sm font-bold text-white">BoomLearning</span>
           </NuxtLink>
 
-          <div class="hidden md:flex items-center gap-1">
+          <div class="hidden md:flex items-center gap-0.5">
             <NuxtLink
               v-for="link in navLinks"
               :key="link.to"
               :to="link.to"
-              class="px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              class="px-2.5 py-1 rounded-md text-xs font-medium transition-colors"
               :class="route.path === link.to
-                ? 'text-primary-600 bg-primary-50'
-                : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'"
+                ? 'text-white bg-white/15'
+                : 'text-primary-100 hover:text-white hover:bg-white/10'"
             >
               {{ link.label }}
             </NuxtLink>
@@ -24,16 +24,16 @@
         </div>
 
         <!-- Search + Actions -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2">
           <!-- Search -->
           <form @submit.prevent="handleSearch" class="hidden sm:flex items-center">
             <div class="relative">
-              <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-primary-300" />
               <input
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search courses..."
-                class="pl-9 pr-4 py-2 w-56 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                class="pl-8 pr-3 py-1 w-48 text-xs bg-white/10 text-white placeholder-primary-300 border border-white/20 rounded-md focus:outline-none focus:ring-1 focus:ring-white/40 focus:border-transparent"
               />
             </div>
           </form>
@@ -41,11 +41,11 @@
           <!-- Authenticated -->
           <template v-if="auth.isAuthenticated">
             <!-- Notifications -->
-            <NuxtLink to="/notifications" class="relative p-2 text-gray-500 hover:text-primary-600 transition-colors">
-              <Bell class="w-5 h-5" />
+            <NuxtLink to="/notifications" class="relative p-1.5 text-primary-200 hover:text-white transition-colors">
+              <Bell class="w-4 h-4" />
               <span
                 v-if="notifications.unreadCount > 0"
-                class="absolute -top-0.5 -right-0.5 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center"
+                class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center"
               >
                 {{ notifications.unreadCount > 9 ? '9+' : notifications.unreadCount }}
               </span>
@@ -55,18 +55,18 @@
             <div class="relative profile-menu-container">
               <button
                 @click="profileMenuOpen = !profileMenuOpen"
-                class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+                class="flex items-center gap-1.5 p-1 rounded-md hover:bg-white/10 transition-colors"
               >
-                <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center overflow-hidden">
+                <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center overflow-hidden">
                   <img
                     v-if="auth.avatarUrl"
                     :src="auth.avatarUrl"
                     :alt="auth.fullName"
                     class="w-full h-full object-cover"
                   />
-                  <User v-else class="w-4 h-4 text-primary-600" />
+                  <User v-else class="w-3 h-3 text-white" />
                 </div>
-                <ChevronDown class="w-4 h-4 text-gray-400 hidden sm:block" />
+                <ChevronDown class="w-3 h-3 text-primary-200 hidden sm:block" />
               </button>
 
               <!-- Dropdown -->
@@ -112,13 +112,13 @@
           <template v-else>
             <NuxtLink
               to="/login"
-              class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors"
+              class="text-xs font-medium text-primary-100 hover:text-white transition-colors"
             >
               Login
             </NuxtLink>
             <NuxtLink
               to="/register"
-              class="text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 px-4 py-2 rounded-lg transition-colors"
+              class="text-xs font-medium text-primary-800 bg-white hover:bg-primary-50 px-3 py-1 rounded-md transition-colors"
             >
               Register
             </NuxtLink>
@@ -127,10 +127,10 @@
           <!-- Mobile Menu Button -->
           <button
             @click="mobileMenuOpen = !mobileMenuOpen"
-            class="md:hidden p-2 text-gray-500 hover:text-gray-700"
+            class="md:hidden p-1.5 text-primary-200 hover:text-white"
           >
-            <X v-if="mobileMenuOpen" class="w-6 h-6" />
-            <Menu v-else class="w-6 h-6" />
+            <X v-if="mobileMenuOpen" class="w-5 h-5" />
+            <Menu v-else class="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -145,17 +145,17 @@
       leave-from-class="opacity-100 translate-y-0"
       leave-to-class="opacity-0 -translate-y-1"
     >
-      <div v-if="mobileMenuOpen" class="md:hidden border-t border-gray-200 bg-white">
-        <div class="px-4 py-3 space-y-1">
+      <div v-if="mobileMenuOpen" class="md:hidden border-t border-white/10 bg-primary-900">
+        <div class="px-4 py-2 space-y-0.5">
           <!-- Mobile Search -->
-          <form @submit.prevent="handleSearch" class="mb-3 sm:hidden">
+          <form @submit.prevent="handleSearch" class="mb-2 sm:hidden">
             <div class="relative">
-              <Search class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search class="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-primary-300" />
               <input
                 v-model="searchQuery"
                 type="text"
                 placeholder="Search courses..."
-                class="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                class="w-full pl-8 pr-3 py-1.5 text-xs bg-white/10 text-white placeholder-primary-300 border border-white/20 rounded-md focus:outline-none focus:ring-1 focus:ring-white/40"
               />
             </div>
           </form>
@@ -164,21 +164,21 @@
             v-for="link in navLinks"
             :key="link.to"
             :to="link.to"
-            class="block px-3 py-2 rounded-md text-base font-medium"
+            class="block px-3 py-1.5 rounded-md text-sm font-medium"
             :class="route.path === link.to
-              ? 'text-primary-600 bg-primary-50'
-              : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'"
+              ? 'text-white bg-white/15'
+              : 'text-primary-100 hover:text-white hover:bg-white/10'"
           >
             {{ link.label }}
           </NuxtLink>
 
           <template v-if="auth.isAuthenticated">
-            <hr class="my-2 border-gray-100" />
+            <hr class="my-1.5 border-white/10" />
             <NuxtLink
               v-for="link in authLinks"
               :key="link.to"
               :to="link.to"
-              class="block px-3 py-2 rounded-md text-base font-medium text-gray-600 hover:text-primary-600 hover:bg-gray-50"
+              class="block px-3 py-1.5 rounded-md text-sm font-medium text-primary-100 hover:text-white hover:bg-white/10"
             >
               {{ link.label }}
             </NuxtLink>

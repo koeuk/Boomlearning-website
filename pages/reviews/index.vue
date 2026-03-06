@@ -1,5 +1,9 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <NuxtLink to="/" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 mb-4">
+      <ArrowLeft class="w-4 h-4" />
+      Back to Home
+    </NuxtLink>
     <h1 class="text-2xl font-bold text-gray-900 mb-6">My Reviews</h1>
 
     <div v-if="status === 'pending'" class="flex justify-center py-20">
@@ -48,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { Star, Loader2, MessageSquare, Trash2 } from 'lucide-vue-next'
+import { ArrowLeft, Star, Loader2, MessageSquare, Trash2 } from 'lucide-vue-next'
 import type { Review } from '~/types/review'
 import type { ApiResponse } from '~/types/api'
 

@@ -9,6 +9,10 @@
         class="absolute inset-0 w-full h-full object-cover opacity-20"
       />
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <NuxtLink to="/categories" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 mb-4">
+          <ArrowLeft class="w-4 h-4" />
+          Back to Categories
+        </NuxtLink>
         <div class="flex items-center gap-2 text-primary-200 text-sm mb-3">
           <NuxtLink to="/categories" class="hover:text-white">Categories</NuxtLink>
           <ChevronRight class="w-4 h-4" />
@@ -66,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import type { ApiResponse, PaginatedResponse } from '~/types/api'
 import type { Category } from '~/types/category'
 import type { Course } from '~/types/course'

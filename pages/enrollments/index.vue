@@ -1,5 +1,9 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <NuxtLink to="/" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 mb-4">
+      <ArrowLeft class="w-4 h-4" />
+      Back to Home
+    </NuxtLink>
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900">My Learning</h1>
       <p class="text-gray-500 mt-1">Track your enrolled courses and progress</p>
@@ -102,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import { BookOpen, Clock, CheckCircle, XCircle } from 'lucide-vue-next'
+import { ArrowLeft, BookOpen, Clock, CheckCircle, XCircle } from 'lucide-vue-next'
 import type { PaginatedResponse } from '~/types/api'
 import type { Enrollment } from '~/types/enrollment'
 

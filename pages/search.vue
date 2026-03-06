@@ -1,5 +1,9 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <NuxtLink to="/" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 mb-4">
+      <ArrowLeft class="w-4 h-4" />
+      Back to Home
+    </NuxtLink>
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900">Search</h1>
       <p v-if="search" class="text-gray-500 mt-1">
@@ -70,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { Search, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { ArrowLeft, Search, ChevronLeft, ChevronRight } from 'lucide-vue-next'
 import type { PaginatedResponse, ApiResponse } from '~/types/api'
 import type { Course } from '~/types/course'
 import type { Category } from '~/types/category'

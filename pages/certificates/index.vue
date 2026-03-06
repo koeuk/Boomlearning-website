@@ -1,5 +1,9 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <NuxtLink to="/" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 mb-4">
+      <ArrowLeft class="w-4 h-4" />
+      Back to Home
+    </NuxtLink>
     <h1 class="text-2xl font-bold text-gray-900 mb-6">My Certificates</h1>
 
     <!-- Loading -->
@@ -55,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { Award, Download, Eye, Loader2 } from 'lucide-vue-next'
+import { ArrowLeft, Award, Download, Eye, Loader2 } from 'lucide-vue-next'
 import type { Certificate } from '~/types/certificate'
 import type { ApiResponse } from '~/types/api'
 

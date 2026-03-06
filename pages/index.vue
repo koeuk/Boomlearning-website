@@ -8,27 +8,26 @@
           <div class="absolute -left-10 -bottom-10 w-60 h-60 rounded-full bg-white/5" />
           <div class="absolute right-1/3 top-1/4 w-40 h-40 rounded-full bg-accent-500/10" />
         </div>
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8">
           <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/10">
-              <span class="text-2xl font-bold">{{ auth.user?.full_name?.[0]?.toUpperCase() }}</span>
+            <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/10">
+              <span class="text-xl font-bold">{{ auth.user?.full_name?.[0]?.toUpperCase() }}</span>
             </div>
             <div>
-              <h1 class="text-2xl md:text-3xl font-bold">Welcome back, {{ auth.user?.full_name?.split(' ')[0] }}!</h1>
-              <p class="text-primary-200 mt-0.5">Here's your learning progress</p>
+              <h1 class="text-xl md:text-2xl font-bold">Welcome back, {{ auth.user?.full_name?.split(' ')[0] }}!</h1>
+              <p class="text-primary-200 text-sm">Here's your learning progress</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="bg-gray-50/50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-          <!-- Stats pulled up to overlap hero -->
-          <div class="-mt-14 relative z-10">
+      <section v-if="dashStats || dashLoading" class="bg-gray-50/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+          <div class="-mt-10 relative z-10">
             <DashboardStatsCards :stats="dashStats" :loading="dashLoading" />
           </div>
 
-          <div class="grid lg:grid-cols-5 gap-8">
+          <div class="grid lg:grid-cols-5 gap-6">
             <div class="lg:col-span-3">
               <DashboardContinueLearning :enrollments="dashEnrollments" :loading="dashLoading" />
             </div>
@@ -172,16 +171,16 @@
     </template>
 
     <!-- Categories (both modes) -->
-    <section v-if="categories.length > 0" class="bg-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-        <div class="flex items-center justify-between mb-10">
+    <section v-if="categories.length > 0">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+        <div class="flex items-end justify-between mb-6">
           <div>
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Browse Categories</h2>
-            <p class="text-gray-400 mt-2">Find courses in your area of interest</p>
+            <h2 class="text-2xl font-bold text-gray-900">Browse Categories</h2>
+            <p class="text-gray-400 text-sm mt-1">Find courses in your area of interest</p>
           </div>
           <NuxtLink
             to="/categories"
-            class="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700"
+            class="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 shrink-0"
           >
             View All
             <ArrowRight class="w-4 h-4" />
@@ -203,16 +202,16 @@
     </section>
 
     <!-- Featured Courses (both modes) -->
-    <section class="bg-gray-50/80">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-20">
-        <div class="flex items-center justify-between mb-10">
+    <section class="bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+        <div class="flex items-end justify-between mb-6">
           <div>
-            <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Featured Courses</h2>
-            <p class="text-gray-400 mt-2">Handpicked courses to help you get started</p>
+            <h2 class="text-2xl font-bold text-gray-900">Featured Courses</h2>
+            <p class="text-gray-400 text-sm mt-1">Handpicked courses to help you get started</p>
           </div>
           <NuxtLink
             to="/courses"
-            class="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700"
+            class="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 shrink-0"
           >
             View All
             <ArrowRight class="w-4 h-4" />
